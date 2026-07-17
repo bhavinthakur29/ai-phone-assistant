@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "axion-engine"
+version = "0.1.0.dev0"
+description = "A modular, AI-agnostic automation engine."
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [
+    { name = "TekSquad" }
+]
+requires-python = ">=3.12"
+
+dependencies = [
+    "adb-shell==0.4.4",
+]
+
+keywords = [
+    "automation",
+    "android",
+    "adb",
+    "ai",
+    "assistant",
+    "automation-engine"
+]
+
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent"
+]
+
+[project.urls]
+Homepage = "https://github.com/bhavinthakur29/axion-engine"
+Repository = "https://github.com/bhavinthakur29/axion-engine"
+Issues = "https://github.com/bhavinthakur29/axion-engine/issues"
+
+[project.scripts]
+axion = "axion.cli.main:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["axion*"]

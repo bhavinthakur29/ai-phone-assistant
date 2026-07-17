@@ -44,10 +44,16 @@ Completed:
 
 ✅ CLI
 
+✅ Python package configuration
+
+✅ Installable CLI entry point
+
 
 Pending:
 
-⬜ Sprint 1.5 Stabilization
+⬜ CLI architecture refactoring
+
+⬜ Sprint 2 — Execution Engine
 
 
 ---
@@ -56,6 +62,14 @@ Pending:
 
 Execution flow:
 
+
+Terminal
+
+↓
+
+axion
+
+↓
 
 CLI
 
@@ -126,35 +140,56 @@ Verified:
 - Tap action.
 
 
-
 ---
 
-## CLI Interface
+## CLI
 
 Implemented:
 
-- Command parsing.
-- Android command interface.
+- Command-line interface.
+- Android command parsing.
 - Device abstraction integration.
-- User-facing command execution.
+- Result output.
 
 
 Verified:
 
-python -m axion.cli.main android status
+axion android status
 
-python -m axion.cli.main android home
+axion android home
 
-python -m axion.cli.main android back
+axion android back
 
-python -m axion.cli.main android tap 500 500
+axion android tap 500 500
 
-python -m axion.cli.main android type "hello"
+axion android type "hello"
 
-python -m axion.cli.main android launch com.android.settings
+axion android launch com.android.settings
 
 
-All tested commands executed successfully.
+All commands executed successfully.
+
+
+---
+
+## Packaging
+
+Implemented:
+
+- pyproject.toml
+- Editable package installation
+- Python package metadata
+- CLI entry point
+
+
+Verified:
+
+pip install -e .
+
+axion android status
+
+
+Axion now runs as an installable Python application.
 
 
 ---
@@ -172,17 +207,15 @@ Runtime files belong inside:
 Vault is the single source of runtime paths.
 
 
-
 ---
 
 ## ADR-0002
 
-Nexus is only the communication layer.
+Nexus is the communication layer only.
 
 Higher-level modules communicate through Nexus.
 
 Nexus contains no business logic.
-
 
 
 ---
@@ -194,46 +227,69 @@ Devices provide high-level interfaces over Nexus transports.
 AndroidDevice must not contain ADB implementation details.
 
 
-
 ---
 
 # Latest Commit
+
+build(packaging): add installable Python package
+
+Previous:
 
 f669bec
 
 test(devices): verify Android device operations
 
 
-Previous:
-
-4efa82d
-
-feat(devices): implement Android device abstraction
-
-
 ---
 
 # Next Task
 
-Sprint 1.5 — Stabilization
+Refactor the CLI architecture.
 
 
-Tasks:
+Goals:
 
-- Add package metadata.
-- Configure CLI entry point.
-- Review pyproject.toml.
-- Remove remaining legacy imports.
-- Move manual testing into test suite.
-- Add mocked unit tests.
-- Clean up deprecated modules.
+- Keep main.py as the entry point only.
+- Move argument parsing into dedicated modules.
+- Add command handlers under cli/commands/.
+- Preserve the current public CLI interface.
+
+
+Target structure:
+
+axion/
+
+└── cli/
+
+    ├── main.py
+
+    ├── parser.py
+
+    └── commands/
+
+        ├── __init__.py
+
+        ├── android.py
+
+        └── system.py
+
+
+After CLI refactoring, begin Sprint 2 — Execution Engine.
 
 
 ---
 
 # Notes
 
-Project remains fully runnable.
+Sprint 1 Foundation is functionally complete.
+
+Axion is now:
+
+- Modular
+- Installable
+- Runnable through the `axion` command
+- Architecturally layered
+- Ready for Execution Engine development
 
 Development rules:
 
