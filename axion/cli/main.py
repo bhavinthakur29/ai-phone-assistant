@@ -77,6 +77,7 @@ def create_parser() -> argparse.ArgumentParser:
         type=int,
     )
 
+
     swipe = commands.add_parser(
         "swipe",
         help="Swipe screen",
@@ -108,6 +109,7 @@ def create_parser() -> argparse.ArgumentParser:
         default=300,
     )
 
+
     text = commands.add_parser(
         "type",
         help="Type text",
@@ -116,6 +118,7 @@ def create_parser() -> argparse.ArgumentParser:
     text.add_argument(
         "value",
     )
+
 
     launch = commands.add_parser(
         "launch",
@@ -126,14 +129,32 @@ def create_parser() -> argparse.ArgumentParser:
         "package",
     )
 
+
+    close = commands.add_parser(
+        "close",
+        help="Close application",
+    )
+
+    close.add_argument(
+        "package",
+    )
+
+
+    commands.add_parser(
+        "apps",
+        help="List installed applications",
+    )
+
+
     return parser
 
 
-def build_dispatcher() -> Dispatcher:
-    """
-    Create Axion execution pipeline.
 
-    CLI only initializes components.
+def execute_command(
+    args: argparse.Namespace,
+) -> None:
+    """
+    Execute command through Axion engine.
     """
 
     registry = create_registry()
@@ -142,112 +163,109 @@ def build_dispatcher() -> Dispatcher:
         registry
     )
 
-    return Dispatcher(
+    dispatcher = Dispatcher(
         executor
     )
 
 
-def create_command(
-    args: argparse.Namespace,
-) -> str:
-    """
-    Convert CLI arguments into Axion commands.
-
-    CLI does not execute actions.
-    It only translates user input.
-    """
-
-    if args.platform != "android":
-        return ""
-
-    if args.command == "status":
-        return "android.status"
-
-    if args.command == "home":
-        return "android.home"
-
-    if args.command == "back":
-        return "android.back"
-
-    if args.command == "tap":
-        return (
-            f"android.tap "
-            f"{args.x} "
-            f"{args.y}"
-        )
-
-    if args.command == "swipe":
-        return (
-            f"android.swipe "
-            f"{args.x1} "
-            f"{args.y1} "
-            f"{args.x2} "
-            f"{args.y2} "
-            f"{args.duration}"
-        )
-
-    if args.command == "type":
-        return (
-            f"android.type "
-            f"{args.value}"
-        )
-
-    if args.command == "launch":
-        return (
-            f"android.launch "
-            f"{args.package}"
-        )
-
-    return ""
+    command = ""
 
 
-def display_result(
-    result: object,
-) -> None:
-    """
-    Display execution result.
+    if args.platform == "android":
 
-    Supports different action return types.
-    """
+        if args.command == "status":
 
-    if hasattr(result, "success"):
-
-        if result.success:
-            print("Success")
-        else:
-            print("Failed")
-
-        return
-
-    print(result)
+            command = "android.status"
 
 
-def execute_command(
-    args: argparse.Namespace,
-) -> None:
-    """
-    Execute CLI command through Axion engine.
-    """
+        elif args.command == "home":
 
-    dispatcher = build_dispatcher()
+            command = "android.home"
 
-    command = create_command(
-        args
-    )
 
-    if not command:
-        print(
-            "Unknown command"
-        )
-        return
+        elif args.command == "back":
+
+            command = "android.back"
+
+
+        elif args.command == "tap":
+
+            command = (
+                f"android.tap "
+                f"{args.x} "
+                f"{args.y}"
+            )
+
+
+        elif args.command == "swipe":
+
+            command = (
+                f"android.swipe "
+                f"{args.x1} "
+                f"{args.y1} "
+                f"{args.x2} "
+                f"{args.y2} "
+                f"{args.duration}"
+            )
+
+
+        elif args.command == "type":
+
+            command = (
+                f"android.type "
+                f"{args.value}"
+            )
+
+
+        elif args.command == "launch":
+
+            command = (
+                f"android.launch "
+                f"{args.package}"
+            )
+
+
+        elif args.command == "close":
+
+            command = (
+                f"android.close "
+                f"{args.package}"
+            )
+
+
+        elif args.command == "apps":
+
+            command = "android.apps"
+
+
 
     result = dispatcher.dispatch(
         command
     )
 
-    display_result(
-        result
-    )
+
+    if hasattr(result, "success"):
+
+        if result.success:
+
+            if result.stdout:
+                print(result.stdout)
+
+            else:
+                print("Success")
+
+        else:
+
+            if result.stderr:
+                print(result.stderr)
+
+            else:
+                print("Failed")
+
+    else:
+
+        print(result)
+
 
 
 def main() -> None:
