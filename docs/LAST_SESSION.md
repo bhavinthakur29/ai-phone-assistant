@@ -1,74 +1,45 @@
-LAST_SESSION.md
-
-# Axion Session - 17 July 2026
+# Last Session Update
+Date: 2026-07-17
 
 ## Completed
 
-### Command Engine Fix
-- Fixed Executor to instantiate registered Action classes.
-- Fixed Dispatcher argument forwarding.
-- Migrated command execution flow from direct CLI calls to Axion action registry.
+### Android Automation Layer
+Implemented and tested Android device control through ADB.
 
-### Android Input Support
+Added commands:
 
-Implemented and tested:
-
-✅ android.home
-✅ android.back
-✅ android.tap
-✅ android.type
-✅ android.swipe
-
-ADB transport verified.
-
-### Android Application Actions
-
-Added:
-
-✅ android.launch
-✅ android.close
-✅ android.apps
-
-Registry successfully loads:
-
-android.launch
-android.close
-android.apps
-
-
-## Current Architecture
-
-CLI
- -> Dispatcher
- -> Executor
- -> ActionRegistry
- -> Actions
- -> AndroidDevice
- -> ADBTransport
-
-
-## Current Issue
-
-CLI parser does not expose:
-
+- android home
+- android back
+- android tap
+- android type
+- android swipe
+- android launch
 - android close
 - android apps
 
-Only launch is available.
+### Architecture
 
-Next task:
-Update CLI parser and command mapping for:
+Flow verified:
 
-axion android close <package>
-axion android apps
+CLI
+→ Dispatcher
+→ Executor
+→ Action Registry
+→ Android Actions
+→ AndroidDevice
+→ ADBTransport
 
+### New Actions Registered
 
-## Testing Status
+- android.home
+- android.back
+- android.tap
+- android.type
+- android.swipe
+- android.launch
+- android.close
+- android.apps
 
-ADB:
-Connected over wireless:
+### Testing
 
-192.168.0.155:5555
-
-
-All tested Android input commands successful.
+Successful tests:
