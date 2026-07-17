@@ -11,17 +11,20 @@ v0.1.0-dev
 
 ## Session Summary
 
-Vault foundation has been completed.
+Foundation development has progressed with the completion of the Android Device abstraction.
 
-The configuration architecture has been improved by separating:
+The project now includes:
 
-- runtime paths
-- application settings
-- runtime context
-
-Nexus communication layer has also been implemented.
-
-The legacy ADB controller has been refactored into a dedicated Nexus transport layer.
+- Updated README
+- Project roadmap
+- Apache License 2.0
+- NOTICE file
+- Improved repository structure
+- Runtime ignore rules
+- Chronicle logging layer
+- Vault runtime configuration system
+- Nexus communication layer
+- Android device abstraction
 
 ---
 
@@ -31,9 +34,25 @@ ADR-0001
 
 Runtime files belong inside `.axion/`.
 
-No subsystem should create arbitrary folders.
-
 Vault is the single source of runtime paths.
+
+---
+
+ADR-0002
+
+Nexus is the transport layer only.
+
+It is responsible for communication with external systems (currently ADB) but must never contain business logic.
+
+Higher-level abstractions must communicate through Nexus rather than invoking subprocesses directly.
+
+---
+
+ADR-0003
+
+Devices provide high-level interfaces over Nexus transports.
+
+AndroidDevice is the primary Android abstraction and must not contain ADB implementation details.
 
 ---
 
@@ -41,230 +60,55 @@ Vault is the single source of runtime paths.
 
 ✅ Repository structure
 
----
-
-## Chronicle
-
-Completed:
-
-- Centralized logging system
-- Console and file logging
-- Rotating file handler
-- Single initialization protection
-- Module-based loggers
-- Runtime log directory obtained through Vault
-
----
-
-## Vault
-
-Completed:
-
-### Runtime Paths
-
-- Centralized `.axion/` directory ownership
-- Logs directory management
-- Runtime folder structure preparation
-
-### Configuration System
-
-Created:
-
-- settings.py
-
-Configuration is now accessed through:
-
-from axion.vault import settings
-
-Example:
-
-settings.adb.path
-settings.llm.model
-settings.speech.wake_word
-
-### Backward Compatibility
-
-Legacy Config access remains supported:
-
-from axion.vault import Config
-
-The compatibility layer maps old configuration values to the new settings system.
-
-### Runtime Context
-
-Created:
-
-- context.py
-
-Current runtime state:
-
-- session_id
-- started_at
-- environment
-
----
-
-## Nexus
-
-Completed:
-
-Created communication layer:
-
-axion/nexus/
-
-- adb.py
-- exceptions.py
-- __init__.py
-
-Responsibilities:
-
-- Execute ADB commands
-- Return structured command results
-- Handle communication failures
-- Integrate with Chronicle logging
-
-Implemented:
-
-- ADBTransport
-- CommandResult
-- ADBError
-- Public Nexus API
-
-Example:
-
-from axion.nexus import ADBTransport
-
-adb = ADBTransport()
-
-result = adb.execute(
-    ["devices"]
-)
-
----
-
-## Validation
-
-Tested successfully:
-
-ADB communication:
-
-List of devices attached
-192.168.0.155:5555      device
-
-Result:
-
-True
-
----
-
-Chronicle integration:
-
-Log generated successfully:
-
-[INFO] [axion.nexus.adb] Executing ADB command: ['adb', 'devices']
-
----
-
-## Current Architecture
-
-Brain
-
-    |
-    v
-
-Arsenal
-
-    |
-    v
-
-Devices
-
-    |
-    v
-
-Nexus
-
-    |
-    v
-
-ADB
-
-
-Vault
-
-    |
-    +-- Paths
-    +-- Settings
-    +-- Context
-
-
-Chronicle
-
-    |
-    +-- Logging
-
----
-
-## Sprint Status
-
-Sprint 1 — Foundation
-
-✅ Repository structure
-
 ✅ Chronicle
-
-    - Logging abstraction
-    - Rotating logs
-    - Single initialization
-    - Vault path integration
-
 
 ✅ Vault
 
-    - Runtime paths
-    - Configuration system
-    - Backward compatibility layer
-    - Runtime context
-
+✅ Runtime Context
 
 ✅ Nexus
 
-    - ADB transport
-    - Public API
-    - CommandResult handling
-    - Error handling
-    - Chronicle integration
-
-
-⬜ Android Device
+✅ Android Device
 
 ---
 
 ## Pending
 
-Sprint 1 remaining:
+Sprint 1
 
-⬜ Android Device abstraction
+⬜ CLI
 
 ---
 
 ## Next Task
 
-Implement Android Device layer.
+Implement Axion CLI.
 
-Android Device will provide a high-level interface:
+CLI responsibilities:
 
-- connect()
-- disconnect()
-- tap()
-- swipe()
-- type_text()
-- press_back()
-- home()
-- launch_app()
+- Parse user commands
+- Initialize Axion runtime
+- Call Device abstractions
+- Display results
 
-Android Device will use Nexus internally.
+CLI must contain no business logic.
 
-Nexus will remain a communication layer only.
+The execution flow becomes:
+
+CLI
+
+↓
+
+AndroidDevice
+
+↓
+
+Nexus
+
+↓
+
+ADB
+
+---
 
 The project remains fully runnable.

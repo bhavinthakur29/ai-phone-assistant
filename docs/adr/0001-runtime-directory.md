@@ -6,27 +6,35 @@ Accepted
 
 ## Decision
 
-Axion stores all runtime-generated files inside `.axion/`.
+Axion uses `.axion/` as the single runtime directory for all generated and mutable application state.
+
+Source code, configuration templates, and static resources must remain outside this directory.
 
 ## Reason
 
-Separates source code from generated state.
+Separating runtime state from source code provides:
 
-Provides one location for:
+- Cleaner repository structure
+- Easier debugging and maintenance
+- Simple runtime cleanup and reset
+- Clear ownership of generated files
 
-- logs
-- cache
-- reports
-- temporary files
-- plugin data
-- workflow state
+The `.axion/` directory contains:
 
-Keeps the repository clean.
+- Logs
+- Cache
+- Reports
+- Temporary files
+- Plugin data
+- Workflow state
+- Runtime metadata
 
-Allows complete runtime reset by deleting one folder.
+A complete runtime reset can be performed by removing the `.axion/` directory.
 
 ## Consequences
 
-Every subsystem must obtain runtime paths through Vault.
+All subsystems must obtain runtime paths through Vault.
 
-No module should create its own runtime directories independently.
+No module may create runtime directories independently.
+
+Vault is the single source of truth for runtime filesystem locations.

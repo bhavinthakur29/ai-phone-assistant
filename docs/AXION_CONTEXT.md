@@ -470,7 +470,14 @@ Sprint 1 — Foundation
     - Chronicle integration
 
 
-⬜ Android Device
+🟡 Android Device
+    - High-level abstraction
+    - Nexus delegation
+    - Logging
+    - Basic operations
+    - Structured return types (remaining)
+
+⬜ CLI
 ---
 
 # Current Architecture State

@@ -1,13 +1,9 @@
-from axion.nexus import ADBTransport
+from axion.devices import AndroidDevice
 
+device = AndroidDevice()
 
-adb = ADBTransport()
+print(device.is_connected())
 
-result = adb.execute(
-    ["devices"]
-)
+print(device.screen_size().stdout)
 
-result.raise_for_error()
-
-print(result.stdout)
-print(result.success)
+print(device.battery().stdout)
