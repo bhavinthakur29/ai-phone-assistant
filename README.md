@@ -1,4 +1,9 @@
-# AXION
+# **AXION**
+
+[![Release](https://img.shields.io/github/v/release/bhavinthakur29/axion-engine)](https://github.com/bhavinthakur29/axion-engine/releases)
+[![Python](https://img.shields.io/badge/Python-3.12+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Status](https://img.shields.io/badge/Status-Active%20Development-orange)](https://github.com/bhavinthakur29/axion-engine)
+[![License](https://img.shields.io/badge/License-Apache%202.0-green)](LICENSE)
 
 A modular and extensible automation engine.
 
