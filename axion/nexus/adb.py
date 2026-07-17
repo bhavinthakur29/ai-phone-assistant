@@ -17,7 +17,6 @@ from pathlib import Path
 
 from axion.vault import settings
 from axion.chronicle import get_logger
-
 from axion.nexus.exceptions import ADBError
 
 
@@ -33,6 +32,8 @@ class CommandResult:
     stdout: str
     stderr: str
     return_code: int
+    raw: bytes | None = None
+
 
     @property
     def success(self) -> bool:
@@ -78,7 +79,7 @@ class ADBTransport:
         args: list[str],
     ) -> CommandResult:
         """
-        Execute text-based ADB command.
+        Execute text based ADB command.
         """
 
         command = [
@@ -86,17 +87,18 @@ class ADBTransport:
             *args,
         ]
 
+
         logger.info(
             "Executing ADB command: %s",
             command,
         )
+
 
         try:
 
             result = subprocess.run(
                 command,
                 capture_output=True,
-                text=True,
             )
 
 
@@ -109,8 +111,16 @@ class ADBTransport:
 
 
         return CommandResult(
-            stdout=result.stdout.strip(),
-            stderr=result.stderr.strip(),
+            stdout=result.stdout.decode(
+                "utf-8",
+                errors="ignore",
+            ),
+
+            stderr=result.stderr.decode(
+                "utf-8",
+                errors="ignore",
+            ),
+
             return_code=result.returncode,
         )
 
@@ -166,11 +176,18 @@ class ADBTransport:
 
 
         return CommandResult(
-            stdout=str(output_file)
-            if result.returncode == 0
-            else "",
+            stdout=(
+                str(output_file)
+                if result.returncode == 0
+                else ""
+            ),
+
             stderr=result.stderr.decode(
-                errors="ignore"
+                "utf-8",
+                errors="ignore",
             ).strip(),
+
             return_code=result.returncode,
+
+            raw=result.stdout,
         )

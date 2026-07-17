@@ -146,6 +146,11 @@ def create_parser() -> argparse.ArgumentParser:
     )
 
     commands.add_parser(
+        "screenshot",
+        help="Capture current Android screen",
+    )
+
+    commands.add_parser(
         "screen",
         help="Get screen information",
     )
@@ -241,6 +246,10 @@ def execute_command(
         elif args.command == "apps":
 
             command = "android.apps"
+            
+        elif args.command == "screenshot":
+
+            command = "android.screenshot"
 
         elif args.command == "screen":
 
