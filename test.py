@@ -1,10 +1,8 @@
-from axion.vault import Config, settings
+from axion.vault import context
 
 
-print(Config.ADB_PATH)
+print(context.session_id)
 
-print(settings.adb.path)
+print(context.started_at)
 
-print(Config.LLM_MODEL)
-
-print(settings.llm.model)
+print(context.environment)

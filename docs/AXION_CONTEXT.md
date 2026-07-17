@@ -439,9 +439,8 @@ Sprint 1 — Foundation
     - Runtime paths
     - Configuration system
     - Backward compatibility layer
+    - Runtime context
 
-
-⬜ Vault Context
 
 ⬜ Nexus
 
