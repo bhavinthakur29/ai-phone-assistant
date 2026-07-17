@@ -397,28 +397,47 @@ CLI -> Nexus
 Repository structure:
 ✅ Complete
 
-Copied modules:
+Legacy modules migrated:
+
+Configuration:
 ✅ assistant/config.py
+
+Dispatcher:
 ✅ assistant/dispatcher.py
+
+AI:
 ✅ assistant/llm.py
 ✅ assistant/parser.py
 ✅ assistant/speech.py
 
+Android:
 ✅ android/adb.py
 ✅ android/apps.py
 ✅ android/media.py
 ✅ android/youtube.py
 
-Files have been copied into the new architecture.
+Migration status:
 
-They still require refactoring to:
+Repository structure:
+✅ Complete
 
-- Update imports
-- Use Chronicle
-- Use Vault
-- Match the new architecture
+Chronicle:
+✅ Refactored
 
-Legacy folders are still kept as fallback.
+Vault:
+✅ Refactored
+
+Nexus:
+✅ Refactored
+
+Remaining legacy modules require migration into:
+
+- Devices
+- Arsenal
+- Brain
+- Oracle
+- CLI
+- Workflow Engine
 
 ---
 
@@ -452,24 +471,60 @@ Sprint 1 — Foundation
 
 
 ⬜ Android Device
+---
 
-# Roadmap
+# Current Architecture State
 
-v0.1.0
+The current execution flow is:
 
-Repository
+AndroidDevice
 
-Chronicle
-
-Vault
+        |
+        v
 
 Nexus
 
-Android Device
+        |
+        v
 
-CLI
+ADB
 
-v0.2.0
+
+Vault provides:
+
+- Paths
+- Settings
+- Runtime Context
+
+
+Chronicle provides:
+
+- Logging
+
+All modules communicate through defined boundaries.
+
+No subsystem should bypass these layers.
+
+---
+
+# Roadmap
+
+## v0.1.0 — Foundation
+
+Repository
+
+✅ Chronicle
+
+✅ Vault
+
+✅ Nexus
+
+⬜ Android Device
+
+⬜ CLI
+
+
+## v0.2.0 — Execution Engine
 
 Registry
 
@@ -479,17 +534,25 @@ Executor
 
 Arsenal
 
-v0.3.0
+Action system
+
+Workflow Engine
+
+
+## v0.3.0 — Intelligence Layer
 
 Brain
 
 Oracle
 
-Architect
+AI integration
 
-Workflow Engine
+Speech processing
 
-v0.4.0
+Intent understanding
+
+
+## v0.4.0 — Platform Expansion
 
 Windows
 
@@ -497,9 +560,22 @@ Browser
 
 Plugins
 
-v1.0
+Linux
 
-TULSI Integration
+Docker
+
+Home Assistant
+
+
+## v1.0.0 — TULSI Integration
+
+TULSI integration
+
+Plugin ecosystem
+
+Stable public API
+
+External integrations
 
 ---
 
@@ -573,16 +649,43 @@ Maintain consistency with all decisions documented here.
 
 # Next Task
 
-Begin implementing Chronicle.
+# Next Task
 
-Then Vault.
+Implement Android Device abstraction.
 
-Then refactor Nexus (ADB).
+AndroidDevice will provide:
 
-Do not proceed to Brain or Arsenal until Foundation is complete.
+- connect()
+- disconnect()
+- tap()
+- swipe()
+- type_text()
+- press_back()
+- home()
+- launch_app()
+
+AndroidDevice will use Nexus internally.
+
+Nexus remains a communication layer only.
+
+After Android Device completion, Sprint 1 Foundation will be complete.
 
 ---
 
 Last Updated
 
 2026-07-17
+
+Current Milestone:
+
+Sprint 1 Foundation
+
+Completed:
+
+- Chronicle
+- Vault
+- Nexus
+
+Next:
+
+Android Device abstraction
