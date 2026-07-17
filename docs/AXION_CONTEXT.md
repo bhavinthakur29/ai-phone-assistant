@@ -422,23 +422,30 @@ Legacy folders are still kept as fallback.
 
 ---
 
-# Current Sprint
+Sprint 1 — Foundation
 
-Sprint 1
+✅ Repository structure
 
-Foundation
+✅ Chronicle
 
-Tasks
+    - Logging abstraction
+    - Rotating logs
+    - Single initialization
+    - Vault path integration
 
-⬜ Chronicle
 
-⬜ Vault
+✅ Vault
+
+    - Runtime paths
+    - Configuration system
+    - Backward compatibility layer
+
+
+⬜ Vault Context
 
 ⬜ Nexus
 
 ⬜ Android Device
-
----
 
 # Roadmap
 

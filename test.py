@@ -1,7 +1,10 @@
-from axion.chronicle import get_logger
+from axion.vault import Config, settings
 
-logger = get_logger(__name__)
 
-logger.info("Chronicle initialized.")
-logger.warning("Warning test.")
-logger.error("Error test.")
+print(Config.ADB_PATH)
+
+print(settings.adb.path)
+
+print(Config.LLM_MODEL)
+
+print(settings.llm.model)
