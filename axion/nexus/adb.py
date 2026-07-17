@@ -5,6 +5,7 @@ Nexus responsibility:
 - Execute ADB commands
 - Return command results
 - Handle communication failures
+- Handle binary output streams
 """
 
 from __future__ import annotations
@@ -12,6 +13,7 @@ from __future__ import annotations
 import subprocess
 
 from dataclasses import dataclass
+from pathlib import Path
 
 from axion.vault import settings
 from axion.chronicle import get_logger
@@ -37,11 +39,13 @@ class CommandResult:
         """
         Whether command completed successfully.
         """
+
         return self.return_code == 0
+
 
     def raise_for_error(self) -> None:
         """
-        Raise an exception if command failed.
+        Raise exception if command failed.
         """
 
         if not self.success:
@@ -50,10 +54,12 @@ class CommandResult:
             )
 
 
+
 class ADBTransport:
     """
     Low-level ADB communication layer.
     """
+
 
     def __init__(
         self,
@@ -66,12 +72,13 @@ class ADBTransport:
         )
 
 
+
     def execute(
         self,
         args: list[str],
     ) -> CommandResult:
         """
-        Execute an ADB command.
+        Execute text-based ADB command.
         """
 
         command = [
@@ -92,6 +99,7 @@ class ADBTransport:
                 text=True,
             )
 
+
         except OSError as exc:
 
             raise ADBError(
@@ -99,11 +107,70 @@ class ADBTransport:
             ) from exc
 
 
-        command_result = CommandResult(
+
+        return CommandResult(
             stdout=result.stdout.strip(),
             stderr=result.stderr.strip(),
             return_code=result.returncode,
         )
 
-        return command_result       
-    
+
+
+    def execute_binary(
+        self,
+        args: list[str],
+        output_file: Path,
+    ) -> CommandResult:
+        """
+        Execute ADB command producing binary output.
+
+        Used for:
+        - screenshots
+        - files
+        - media
+        """
+
+        command = [
+            self.adb_path,
+            *args,
+        ]
+
+
+        logger.info(
+            "Executing binary ADB command: %s",
+            command,
+        )
+
+
+        try:
+
+            result = subprocess.run(
+                command,
+                capture_output=True,
+            )
+
+
+        except OSError as exc:
+
+            raise ADBError(
+                str(exc)
+            ) from exc
+
+
+
+        if result.returncode == 0:
+
+            output_file.write_bytes(
+                result.stdout
+            )
+
+
+        return CommandResult(
+            stdout=str(output_file)
+            if result.returncode == 0
+            else "",
+            stderr=result.stderr.decode(
+                errors="ignore"
+            ).strip(),
+            return_code=result.returncode,
+        )

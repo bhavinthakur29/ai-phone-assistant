@@ -13,7 +13,8 @@ from __future__ import annotations
 
 from axion.chronicle import get_logger
 from axion.nexus import ADBTransport, CommandResult
-
+from pathlib import Path
+from datetime import datetime
 
 logger = get_logger(__name__)
 
@@ -305,3 +306,50 @@ class AndroidDevice:
                 "packages",
             ]
         )
+    
+        # ---------------------------------------------------------
+    # Screen Capture
+    # ---------------------------------------------------------
+
+    def screenshot(
+        self,
+        output_dir: str = ".axion/screenshots",
+    ) -> CommandResult:
+        """
+        Capture Android screen.
+
+        Saves screenshot locally.
+        """
+
+        logger.info(
+            "Capturing screenshot."
+        )
+
+        directory = Path(output_dir)
+
+        directory.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+
+        filename = (
+            datetime.now()
+            .strftime(
+                "screen_%Y%m%d_%H%M%S.png"
+            )
+        )
+
+        output = directory / filename
+
+
+        result = self._transport.execute_raw(
+            [
+                "exec-out",
+                "screencap",
+                "-p",
+            ],
+            output_file=output,
+        )
+
+
+        return result
