@@ -14,7 +14,9 @@ from __future__ import annotations
 import argparse
 
 from axion.chronicle import get_logger
-from axion.devices import AndroidDevice
+from axion.core.bootstrap import create_registry
+from axion.core.executor import Executor
+from axion.core.dispatcher import Dispatcher
 
 
 logger = get_logger(__name__)
@@ -127,72 +129,125 @@ def create_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def build_dispatcher() -> Dispatcher:
+    """
+    Create Axion execution pipeline.
+
+    CLI only initializes components.
+    """
+
+    registry = create_registry()
+
+    executor = Executor(
+        registry
+    )
+
+    return Dispatcher(
+        executor
+    )
+
+
+def create_command(
+    args: argparse.Namespace,
+) -> str:
+    """
+    Convert CLI arguments into Axion commands.
+
+    CLI does not execute actions.
+    It only translates user input.
+    """
+
+    if args.platform != "android":
+        return ""
+
+    if args.command == "status":
+        return "android.status"
+
+    if args.command == "home":
+        return "android.home"
+
+    if args.command == "back":
+        return "android.back"
+
+    if args.command == "tap":
+        return (
+            f"android.tap "
+            f"{args.x} "
+            f"{args.y}"
+        )
+
+    if args.command == "swipe":
+        return (
+            f"android.swipe "
+            f"{args.x1} "
+            f"{args.y1} "
+            f"{args.x2} "
+            f"{args.y2} "
+            f"{args.duration}"
+        )
+
+    if args.command == "type":
+        return (
+            f"android.type "
+            f"{args.value}"
+        )
+
+    if args.command == "launch":
+        return (
+            f"android.launch "
+            f"{args.package}"
+        )
+
+    return ""
+
+
+def display_result(
+    result: object,
+) -> None:
+    """
+    Display execution result.
+
+    Supports different action return types.
+    """
+
+    if hasattr(result, "success"):
+
+        if result.success:
+            print("Success")
+        else:
+            print("Failed")
+
+        return
+
+    print(result)
+
+
 def execute_command(
     args: argparse.Namespace,
 ) -> None:
     """
-    Execute CLI command.
+    Execute CLI command through Axion engine.
     """
 
-    device = AndroidDevice()
+    dispatcher = build_dispatcher()
 
-    if args.platform != "android":
+    command = create_command(
+        args
+    )
+
+    if not command:
+        print(
+            "Unknown command"
+        )
         return
 
-    if args.command == "status":
+    result = dispatcher.dispatch(
+        command
+    )
 
-        print(
-            "Connected"
-            if device.is_connected()
-            else "Not connected"
-        )
-
-    elif args.command == "home":
-
-        result = device.home()
-        print(result.success)
-
-    elif args.command == "back":
-
-        result = device.press_back()
-        print(result.success)
-
-    elif args.command == "tap":
-
-        result = device.tap(
-            args.x,
-            args.y,
-        )
-
-        print(result.success)
-
-    elif args.command == "swipe":
-
-        result = device.swipe(
-            args.x1,
-            args.y1,
-            args.x2,
-            args.y2,
-            args.duration,
-        )
-
-        print(result.success)
-
-    elif args.command == "type":
-
-        result = device.type_text(
-            args.value,
-        )
-
-        print(result.success)
-
-    elif args.command == "launch":
-
-        result = device.launch_app(
-            args.package,
-        )
-
-        print(result.success)
+    display_result(
+        result
+    )
 
 
 def main() -> None:
@@ -204,7 +259,9 @@ def main() -> None:
 
     args = parser.parse_args()
 
-    execute_command(args)
+    execute_command(
+        args
+    )
 
 
 if __name__ == "__main__":

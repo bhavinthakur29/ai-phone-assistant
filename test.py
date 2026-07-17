@@ -1,48 +1,30 @@
-"""
-Manual AndroidDevice integration test.
-
-Run:
-python test.py
-"""
-
-from axion.devices import AndroidDevice
+from axion.core import ActionRegistry, Executor, Dispatcher
+from axion.arsenal import Action
 
 
-def main() -> None:
-    device = AndroidDevice()
+class TestAction(Action):
 
-    print("Checking connection...")
+    name = "test"
 
-    result = device.connect()
+    def execute(self, args=None):
+        return f"Received: {args}"
 
-    print("\nADB Result:")
-    print(result.stdout)
 
-    if not device.is_connected():
-        print("No Android device connected.")
-        return
+registry = ActionRegistry()
 
-    print("\nAndroid device connected.")
+registry.register(
+    "test",
+    TestAction()
+)
 
-    print("\nTesting home button...")
-    result = device.home()
 
-    print(result.success)
+executor = Executor(registry)
 
-    print("\nTesting back button...")
-    result = device.press_back()
+dispatcher = Dispatcher(executor)
 
-    print(result.success)
 
-    print("\nTesting tap...")
-
-    result = device.tap(
-        500,
-        500,
+print(
+    dispatcher.dispatch(
+        "test hello world"
     )
-
-    print(result.success)
-
-
-if __name__ == "__main__":
-    main()
+)

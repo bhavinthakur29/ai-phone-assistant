@@ -99,9 +99,11 @@ class ADBTransport:
             ) from exc
 
 
-        return CommandResult(
+        command_result = CommandResult(
             stdout=result.stdout.strip(),
             stderr=result.stderr.strip(),
             return_code=result.returncode,
         )
+
+        return command_result       
     

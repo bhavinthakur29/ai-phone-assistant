@@ -1,328 +1,240 @@
-# LAST SESSION
+# Axion Last Session
 
-Date:
+## Date
 
 2026-07-17
 
+## Milestone
 
-Project:
+Android command execution pipeline completed.
 
-Axion
+## Completed
 
+### Core execution flow stabilized
 
-Version:
+The Axion command architecture is now working end-to-end:
 
-v0.1.0-dev
-
-
----
-
-# Current Milestone
-
-Sprint 2 — Execution Engine Foundation
-
-
----
-
-# Current Status
-
-Completed:
-
-✅ Repository structure
-
-✅ Chronicle
-
-✅ Vault
-
-✅ Runtime Context
-
-✅ Nexus
-
-✅ AndroidDevice
-
-✅ AndroidDevice integration verification
-
-✅ Arsenal Action base abstraction
-
-✅ Core ActionRegistry
-
-✅ Core Executor
-
-✅ Core Dispatcher
-
-
-Pending:
-
-⬜ Android Actions
-
-⬜ CLI integration with Execution Engine
-
-⬜ Legacy module migration
-
-
----
-
-# Current Architecture State
-
-Execution flow:
-
-
+```
 CLI
-
-↓
-
+ ↓
 Dispatcher
-
-↓
-
+ ↓
 Executor
+ ↓
+Action Registry
+ ↓
+Android Actions
+ ↓
+Android Device Layer
+ ↓
+ADB Nexus
+ ↓
+Device
+```
 
-↓
+## Fixed Issues
 
-ActionRegistry
+### Executor
 
-↓
+* Fixed action registry handling.
+* Registry returns action classes.
+* Executor now creates action instances before execution.
+* Actions correctly receive parameters.
 
-Arsenal Actions
+### Dispatcher
 
-↓
+* Fixed argument forwarding.
+* Changed execution from keyword argument passing to positional arguments.
 
-Devices
+Before:
 
-↓
+```
+execute(args=[x,y])
+```
 
-Nexus
+After:
 
-↓
+```
+execute(x,y)
+```
 
-External Systems
+This allows actions with signatures like:
 
+```
+execute(x, y)
+execute(x1, y1, x2, y2, duration)
+```
 
+to work correctly.
 
-Runtime management:
+### CLI Refactor
 
+* CLI no longer contains Android automation logic.
+* CLI only:
 
-Vault
+  * parses user commands
+  * converts them into Axion commands
+  * sends them through Dispatcher
 
-↓
-
-Settings
-
-Runtime Paths
-
-Configuration
-
-
-
-Logging:
-
-
-All Modules
-
-↓
-
-Chronicle
-
-↓
-
-.axion logs
-
-
----
-
-# Recent Work Completed
-
-
-## Core Execution Engine
-
-
-Implemented:
-
-- Action abstraction inside Arsenal.
-- ActionRegistry for managing executable actions.
-- Executor for controlled action execution.
-- Dispatcher refactor for command routing.
-
-
-Verified:
-
-- Action registration.
-- Action lookup.
-- Action execution.
-- Command parsing and forwarding.
-
-
-Test flow:
-
+Example:
 
 Input:
 
-test hello world
+```
+axion android tap 500 500
+```
 
+Converted command:
 
-Flow:
+```
+android.tap 500 500
+```
 
-Dispatcher
+## Verified Commands
 
-↓
+### Home
 
-Executor
+Command:
 
-↓
+```
+axion android home
+```
 
-ActionRegistry
-
-↓
-
-TestAction
-
-
-Result:
-
-Action executed successfully.
-
+Status:
+✅ Working
 
 ---
 
-# Architecture Decisions
+### Back
 
+Command:
 
-## ADR-0001
+```
+axion android back
+```
 
-Runtime files belong inside:
-
-.axion/
-
-
-Vault is the single source of runtime paths.
-
+Status:
+✅ Working
 
 ---
 
-## ADR-0002
+### Tap
 
-Nexus is only the communication layer.
+Command:
 
-Higher-level modules communicate through Nexus.
+```
+axion android tap 500 500
+```
 
-Nexus contains no business logic.
+Status:
+✅ Working
 
+ADB executed:
 
----
-
-## ADR-0003
-
-Devices provide high-level interfaces over Nexus transports.
-
-AndroidDevice must not contain ADB implementation details.
-
-
----
-
-## ADR-0004
-
-Arsenal contains executable actions.
-
-Actions define capabilities but do not handle:
-
-- command parsing
-- routing
-- low-level communication
-
-
-Execution is controlled through:
-
-Dispatcher
-
-↓
-
-Executor
-
-↓
-
-Action
-
+```
+adb shell input tap 500 500
+```
 
 ---
 
-# Latest Commit
+### Type
 
-f669bec
+Command:
 
-test(devices): verify Android device operations
+```
+axion android type hello
+```
 
+Status:
+✅ Working
 
-Previous:
+ADB executed:
 
-4efa82d
-
-feat(devices): implement Android device abstraction
-
-
----
-
-# Next Task
-
-Implement Android Arsenal Actions.
-
-
-Create actions:
-
-- HomeAction
-- BackAction
-- TapAction
-- SwipeAction
-- TypeAction
-- LaunchAppAction
-
-
-Actions must:
-
-- Use AndroidDevice.
-- Never communicate directly with Nexus.
-- Remain independent from CLI.
-
-
-Expected flow:
-
-
-CLI
-
-↓
-
-Dispatcher
-
-↓
-
-Executor
-
-↓
-
-AndroidAction
-
-↓
-
-AndroidDevice
-
-↓
-
-Nexus
-
-↓
-
-ADB
-
+```
+adb shell input text hello
+```
 
 ---
 
-# Notes
+### Swipe
 
-Project remains fully runnable.
+Command:
 
-Development rules:
+```
+axion android swipe 100 500 500 500
+```
 
-1. Maintain architecture boundaries.
-2. Update LAST_SESSION after every milestone.
-3. Update AXION_CONTEXT only when architecture changes.
-4. Do not migrate legacy functionality directly into Core.
-5. Move capabilities into Arsenal Actions.
+Status:
+✅ Working
+
+ADB executed:
+
+```
+adb shell input swipe 100 500 500 500 300
+```
+
+## Current Registered Actions
+
+```
+android.home
+android.back
+android.tap
+android.type
+android.swipe
+```
+
+## Current Architecture Status
+
+The foundation layer is complete.
+
+Axion now has:
+
+* modular action system
+* registry-based command loading
+* dispatcher routing
+* executor abstraction
+* device separation
+* ADB communication layer
+* CLI interface
+
+## Next Planned Development
+
+### Android Application Lifecycle
+
+Add:
+
+```
+axion android launch <package>
+axion android close <package>
+axion android apps
+```
+
+New modules:
+
+```
+axion/devices/android/apps.py
+```
+
+Features:
+
+* Launch applications
+* Force stop applications
+* List installed packages
+
+### Android Intelligence Layer
+
+Future commands:
+
+```
+axion android screenshot
+axion android screen-size
+axion android dump-ui
+```
+
+Purpose:
+
+Allow Axion to understand the device state before performing actions.
+
+## Git Status
+
+Ready to commit.
