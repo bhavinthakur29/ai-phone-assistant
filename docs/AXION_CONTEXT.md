@@ -114,7 +114,7 @@ Purpose:
 Never:
 
 - Execute actions
-- Talk to ADB
+- Communicate directly with devices
 
 ---
 
@@ -142,21 +142,12 @@ Collection of executable Actions.
 
 Examples:
 
-OpenApp
-
-CloseApp
-
-Tap
-
-Swipe
-
-Screenshot
-
-Media
-
-YouTube
-
-etc.
+- OpenAppAction
+- CloseAppAction
+- TapAction
+- SwipeAction
+- ScreenshotAction
+- MediaAction
 
 ---
 
@@ -168,21 +159,18 @@ Communication layer.
 
 Examples:
 
-ADB
-
-Future:
-
-Win32
-
-Linux
-
-Browser
-
-Docker
+- ADB
+- Future Win32
+- Linux interfaces
+- Browser automation
+- Docker
+- Cloud APIs
 
 Never:
 
-Contain business logic.
+- Contain business logic
+- Understand user intent
+- Make automation decisions
 
 ---
 
@@ -196,23 +184,22 @@ Example:
 
 AndroidDevice
 
+Responsibilities:
+
+- Provide device operations
+- Hide transport details
+- Delegate communication to Nexus
+
 Methods:
 
-connect()
-
-disconnect()
-
-tap()
-
-swipe()
-
-launch_app()
-
-home()
-
-back()
-
-etc.
+- connect()
+- disconnect()
+- tap()
+- swipe()
+- type_text()
+- press_back()
+- home()
+- launch_app()
 
 ---
 
@@ -220,13 +207,11 @@ etc.
 
 Purpose:
 
-Configuration
-
-Environment
-
-Runtime Context
-
-Shared Settings
+- Configuration
+- Environment
+- Runtime Context
+- Shared Settings
+- Runtime paths
 
 ---
 
@@ -246,13 +231,10 @@ Never use print().
 
 Purpose:
 
-Monitoring
-
-Health checks
-
-Failures
-
-Watchdog
+- Monitoring
+- Health checks
+- Failures
+- Watchdog
 
 ---
 
@@ -266,9 +248,10 @@ CLI contains NO business logic.
 
 CLI only:
 
-Parse arguments
-
-Call Engine
+- Parse arguments
+- Initialize runtime
+- Call Axion components
+- Display results
 
 ---
 
@@ -290,97 +273,35 @@ Call Engine
 
 # Import Style
 
-Good
+Good:
 
 from axion.chronicle import get_logger
 
 from axion.vault import settings
 
-Avoid
+
+Avoid:
 
 from axion.chronicle.chronicle import ...
 
 ---
 
-# Logging
-
-Only Chronicle handles logging.
-
-Example
-
-logger.info(...)
-
-logger.warning(...)
-
-logger.error(...)
-
-Never use print().
-
----
-
-# Naming Philosophy
-
-Products
-
-Axion
-
-TULSI
-
-Subsystems
-
-Brain
-
-Oracle
-
-Arsenal
-
-Nexus
-
-Chronicle
-
-Vault
-
-Sentinel
-
-Actions
-
-Verb based
-
-OpenAppAction
-
-CloseAppAction
-
-TapAction
-
-SwipeAction
-
-Models
-
-Object based
-
-Device
-
-Workflow
-
-ActionRequest
-
-AppAlias
-
----
-
 # Dependency Rules
 
-Allowed
+Allowed:
 
 Brain -> Oracle
 
 Brain -> Vault
 
-Executor -> Nexus
+Devices -> Nexus
 
 Executor -> Arsenal
 
-Not Allowed
+Executor -> Nexus
+
+
+Not Allowed:
 
 Nexus -> Brain
 
@@ -416,10 +337,8 @@ Android:
 ✅ android/media.py
 ✅ android/youtube.py
 
-Migration status:
 
-Repository structure:
-✅ Complete
+Current migration status:
 
 Chronicle:
 ✅ Refactored
@@ -430,9 +349,12 @@ Vault:
 Nexus:
 ✅ Refactored
 
-Remaining legacy modules require migration into:
+Devices:
+✅ AndroidDevice implemented
 
-- Devices
+
+Remaining migration areas:
+
 - Arsenal
 - Brain
 - Oracle
@@ -441,48 +363,89 @@ Remaining legacy modules require migration into:
 
 ---
 
-Sprint 1 — Foundation
+# Sprint 1 — Foundation
 
-✅ Repository structure
+## Repository Structure
 
-✅ Chronicle
-
-    - Logging abstraction
-    - Rotating logs
-    - Single initialization
-    - Vault path integration
+✅ Complete
 
 
-✅ Vault
+## Chronicle
 
-    - Runtime paths
-    - Configuration system
-    - Backward compatibility layer
-    - Runtime context
+✅ Complete
 
+Includes:
 
-✅ Nexus
-
-    - ADB transport
-    - Public API
-    - CommandResult handling
-    - Error handling
-    - Chronicle integration
+- Logging abstraction
+- Rotating logs
+- Single initialization
+- Vault path integration
 
 
-🟡 Android Device
-    - High-level abstraction
-    - Nexus delegation
-    - Logging
-    - Basic operations
-    - Structured return types (remaining)
+## Vault
 
-⬜ CLI
+✅ Complete
+
+Includes:
+
+- Runtime paths
+- Configuration system
+- Runtime context
+- Backward compatibility layer
+
+
+## Nexus
+
+✅ Complete
+
+Includes:
+
+- ADB transport
+- Public API
+- CommandResult handling
+- Error handling
+- Chronicle integration
+
+
+## Android Device
+
+✅ Complete
+
+Includes:
+
+- High-level abstraction
+- Nexus delegation
+- Logging integration
+- Device operations
+- Structured return types
+
+
+## Android Integration Verification
+
+✅ Complete
+
+Verified:
+
+- Device connection
+- Home button
+- Back button
+- Tap action
+
+
+## CLI
+
+⬜ Pending
+
 ---
 
 # Current Architecture State
 
-The current execution flow is:
+Current execution flow:
+
+CLI
+
+        |
+        v
 
 AndroidDevice
 
@@ -508,6 +471,7 @@ Chronicle provides:
 
 - Logging
 
+
 All modules communicate through defined boundaries.
 
 No subsystem should bypass these layers.
@@ -518,7 +482,7 @@ No subsystem should bypass these layers.
 
 ## v0.1.0 — Foundation
 
-Repository
+✅ Repository
 
 ✅ Chronicle
 
@@ -526,63 +490,46 @@ Repository
 
 ✅ Nexus
 
-⬜ Android Device
+✅ Android Device
 
 ⬜ CLI
 
 
 ## v0.2.0 — Execution Engine
 
-Registry
-
-Dispatcher
-
-Executor
-
-Arsenal
-
-Action system
-
-Workflow Engine
+- Registry
+- Dispatcher
+- Executor
+- Arsenal
+- Action system
+- Workflow Engine
 
 
 ## v0.3.0 — Intelligence Layer
 
-Brain
-
-Oracle
-
-AI integration
-
-Speech processing
-
-Intent understanding
+- Brain
+- Oracle
+- AI integration
+- Speech processing
+- Intent understanding
 
 
 ## v0.4.0 — Platform Expansion
 
-Windows
-
-Browser
-
-Plugins
-
-Linux
-
-Docker
-
-Home Assistant
+- Windows
+- Browser
+- Plugins
+- Linux
+- Docker
+- Home Assistant
 
 
 ## v1.0.0 — TULSI Integration
 
-TULSI integration
-
-Plugin ecosystem
-
-Stable public API
-
-External integrations
+- TULSI integration
+- Plugin ecosystem
+- Stable public API
+- External integrations
 
 ---
 
@@ -591,21 +538,13 @@ External integrations
 For every module:
 
 1. Review existing implementation.
-
 2. Refactor.
-
 3. Preserve functionality.
-
 4. Improve architecture.
-
 5. Improve imports.
-
 6. Add typing.
-
 7. Add logging.
-
 8. Test.
-
 9. Commit.
 
 Never rewrite blindly.
@@ -624,7 +563,7 @@ docs(component):
 
 test(component):
 
-Example
+Example:
 
 feat(nexus): refactor adb transport layer
 
@@ -656,26 +595,32 @@ Maintain consistency with all decisions documented here.
 
 # Next Task
 
-# Next Task
+Implement Axion CLI.
 
-Implement Android Device abstraction.
+CLI responsibilities:
 
-AndroidDevice will provide:
+- Parse user commands
+- Initialize Axion runtime
+- Call Device abstractions
+- Display results
 
-- connect()
-- disconnect()
-- tap()
-- swipe()
-- type_text()
-- press_back()
-- home()
-- launch_app()
+CLI must contain no business logic.
 
-AndroidDevice will use Nexus internally.
+Execution flow:
 
-Nexus remains a communication layer only.
+CLI
 
-After Android Device completion, Sprint 1 Foundation will be complete.
+↓
+
+AndroidDevice
+
+↓
+
+Nexus
+
+↓
+
+ADB
 
 ---
 
@@ -692,7 +637,9 @@ Completed:
 - Chronicle
 - Vault
 - Nexus
+- Android Device
+- Android Device Integration Verification
 
 Next:
 
-Android Device abstraction
+CLI implementation
