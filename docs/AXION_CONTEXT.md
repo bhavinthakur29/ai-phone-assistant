@@ -1,5 +1,7 @@
 # AXION CONTEXT
-> This file is the single source of truth for continuing development of Axion in any future ChatGPT conversation.
+
+> This file is the architectural source of truth for Axion.
+> It explains what Axion is, how it is designed, and the rules that must be followed during development.
 
 ---
 
@@ -21,7 +23,7 @@ Primary Language: Python 3.12+
 
 Axion is a modular, extensible automation engine.
 
-It is NOT just an Android automation tool.
+It is NOT an Android automation tool only.
 
 The long-term goal is to automate:
 
@@ -35,72 +37,77 @@ The long-term goal is to automate:
 - APIs
 - Cloud Services
 
-Axion is designed to be AI-agnostic.
+Axion is AI-agnostic.
 
-Future AI assistants (including TULSI) will use Axion as their execution engine.
+Axion does not contain intelligence itself.
 
----
-
-# Product Ecosystem
-
-TekSquad
-
-├── TULSI
-│   Portable Personal AI (future)
-│
-└── Axion
-    Automation Engine
+AI assistants such as TULSI will use Axion as an execution engine.
 
 Relationship:
 
 TULSI
-    ↓
+
+↓
+
 Brain
-    ↓
+
+↓
+
 Axion
-    ↓
+
+↓
+
 Devices & Services
 
 ---
 
 # Architecture Philosophy
 
-Every subsystem has ONE responsibility.
+Axion follows strict modular architecture.
 
-Never mix responsibilities.
+Core principles:
 
-Avoid "god classes."
-
-Everything should be modular.
-
-Every component should be replaceable.
-
----
-
-# Current Repository Structure
-
-axion/
-
-brain/
-core/
-nexus/
-devices/
-arsenal/
-oracle/
-vault/
-chronicle/
-sentinel/
-cli/
-config/
-workflows/
-
-docs/
-plugins/
-tests/
+- Every subsystem has one responsibility.
+- Avoid god classes.
+- Keep components replaceable.
+- Separate intelligence from execution.
+- Separate business logic from communication.
+- Prefer composition over inheritance.
+- Keep modules independently testable.
 
 ---
 
-# Core Components
+# System Architecture
+
+High-level flow:
+
+Brain
+
+↓
+
+Core Engine
+
+↓
+
+Arsenal Actions
+
+↓
+
+Devices
+
+↓
+
+Nexus
+
+↓
+
+External Systems
+
+
+---
+
+# Components
+
 
 ## Brain
 
@@ -108,13 +115,19 @@ Purpose:
 
 - Intent understanding
 - NLP
-- Speech
+- Speech processing
 - AI integration
+
+Responsibilities:
+
+- Understand requests.
+- Convert intent into executable actions.
 
 Never:
 
-- Execute actions
-- Communicate directly with devices
+- Execute device operations.
+- Communicate directly with hardware.
+
 
 ---
 
@@ -122,15 +135,41 @@ Never:
 
 Purpose:
 
-Knowledge.
+Knowledge layer.
 
-Examples:
+Contains:
 
+- Application metadata
 - Package names
-- Installed apps
 - Aliases
 - Device capabilities
 - User preferences
+
+Oracle provides information only.
+
+Oracle does not execute actions.
+
+
+---
+
+## Core
+
+Purpose:
+
+Execution management.
+
+Contains:
+
+- Registry
+- Dispatcher
+- Executor
+
+Responsibilities:
+
+- Manage actions.
+- Route requests.
+- Execute workflows.
+
 
 ---
 
@@ -138,7 +177,9 @@ Examples:
 
 Purpose:
 
-Collection of executable Actions.
+Action library.
+
+Contains executable actions.
 
 Examples:
 
@@ -149,28 +190,8 @@ Examples:
 - ScreenshotAction
 - MediaAction
 
----
+Actions define what Axion can do.
 
-## Nexus
-
-Purpose:
-
-Communication layer.
-
-Examples:
-
-- ADB
-- Future Win32
-- Linux interfaces
-- Browser automation
-- Docker
-- Cloud APIs
-
-Never:
-
-- Contain business logic
-- Understand user intent
-- Make automation decisions
 
 ---
 
@@ -180,26 +201,67 @@ Purpose:
 
 High-level device abstraction.
 
+Examples:
+
+- AndroidDevice
+- WindowsDevice
+- LinuxDevice
+
+Responsibilities:
+
+- Provide simple interfaces.
+- Hide transport details.
+- Delegate communication to Nexus.
+
 Example:
 
 AndroidDevice
 
+↓
+
+Nexus
+
+↓
+
+ADB
+
+
+Devices must never contain low-level communication logic.
+
+
+---
+
+## Nexus
+
+Purpose:
+
+Communication layer.
+
+Current:
+
+- ADB
+
+Future:
+
+- Win32
+- Browser automation
+- Docker
+- Linux interfaces
+- Cloud APIs
+
+
 Responsibilities:
 
-- Provide device operations
-- Hide transport details
-- Delegate communication to Nexus
+- Communicate with external systems.
+- Return structured results.
 
-Methods:
 
-- connect()
-- disconnect()
-- tap()
-- swipe()
-- type_text()
-- press_back()
-- home()
-- launch_app()
+Never:
+
+- Contain business logic.
+- Understand user intent.
+- Decide actions.
+
 
 ---
 
@@ -207,11 +269,18 @@ Methods:
 
 Purpose:
 
-- Configuration
-- Environment
-- Runtime Context
-- Shared Settings
+Configuration and runtime environment.
+
+Provides:
+
+- Settings
 - Runtime paths
+- Environment information
+- Shared configuration
+
+
+All runtime paths must come from Vault.
+
 
 ---
 
@@ -219,11 +288,14 @@ Purpose:
 
 Purpose:
 
-Centralized logging.
+Centralized logging system.
 
-Every module uses Chronicle.
+Rules:
 
-Never use print().
+- All modules use Chronicle.
+- No print() in production.
+- No independent logging systems.
+
 
 ---
 
@@ -231,10 +303,14 @@ Never use print().
 
 Purpose:
 
-- Monitoring
+Monitoring.
+
+Responsibilities:
+
 - Health checks
-- Failures
+- Failure detection
 - Watchdog
+
 
 ---
 
@@ -244,45 +320,16 @@ Purpose:
 
 Human interface.
 
-CLI contains NO business logic.
+Responsibilities:
 
-CLI only:
-
-- Parse arguments
-- Initialize runtime
-- Call Axion components
-- Display results
-
----
-
-# Coding Standards
-
-- Python 3.12+
-- Type hints everywhere
-- Docstrings on every public class/function
-- Pathlib instead of os.path where possible
-- No wildcard imports
-- No print() in production
-- Use Chronicle logging
-- Explicit exceptions
-- One responsibility per file
-- Avoid circular imports
-- Prefer composition over inheritance
-
----
-
-# Import Style
-
-Good:
-
-from axion.chronicle import get_logger
-
-from axion.vault import settings
+- Parse commands.
+- Initialize Axion.
+- Call internal APIs.
+- Display results.
 
 
-Avoid:
+CLI must contain no business logic.
 
-from axion.chronicle.chronicle import ...
 
 ---
 
@@ -294,11 +341,15 @@ Brain -> Oracle
 
 Brain -> Vault
 
+Core -> Arsenal
+
+Executor -> Devices
+
 Devices -> Nexus
 
-Executor -> Arsenal
+All modules -> Chronicle
 
-Executor -> Nexus
+All modules -> Vault
 
 
 Not Allowed:
@@ -311,234 +362,123 @@ Oracle -> CLI
 
 CLI -> Nexus
 
----
-
-# Current Migration Status
-
-Repository structure:
-✅ Complete
-
-Legacy modules migrated:
-
-Configuration:
-✅ assistant/config.py
-
-Dispatcher:
-✅ assistant/dispatcher.py
-
-AI:
-✅ assistant/llm.py
-✅ assistant/parser.py
-✅ assistant/speech.py
-
-Android:
-✅ android/adb.py
-✅ android/apps.py
-✅ android/media.py
-✅ android/youtube.py
-
-
-Current migration status:
-
-Chronicle:
-✅ Refactored
-
-Vault:
-✅ Refactored
-
-Nexus:
-✅ Refactored
-
-Devices:
-✅ AndroidDevice implemented
-
-
-Remaining migration areas:
-
-- Arsenal
-- Brain
-- Oracle
-- CLI
-- Workflow Engine
 
 ---
 
-# Sprint 1 — Foundation
+# Runtime Rules
 
-## Repository Structure
+All runtime-generated files belong inside:
 
-✅ Complete
-
-
-## Chronicle
-
-✅ Complete
-
-Includes:
-
-- Logging abstraction
-- Rotating logs
-- Single initialization
-- Vault path integration
+.axion/
 
 
-## Vault
+Examples:
 
-✅ Complete
-
-Includes:
-
-- Runtime paths
-- Configuration system
-- Runtime context
-- Backward compatibility layer
+- Logs
+- Cache
+- Reports
+- Temporary files
+- Plugin data
+- Workflow state
 
 
-## Nexus
+No module creates runtime directories independently.
 
-✅ Complete
+Vault controls runtime paths.
 
-Includes:
-
-- ADB transport
-- Public API
-- CommandResult handling
-- Error handling
-- Chronicle integration
-
-
-## Android Device
-
-✅ Complete
-
-Includes:
-
-- High-level abstraction
-- Nexus delegation
-- Logging integration
-- Device operations
-- Structured return types
-
-
-## Android Integration Verification
-
-✅ Complete
-
-Verified:
-
-- Device connection
-- Home button
-- Back button
-- Tap action
-
-
-## CLI
-
-⬜ Pending
 
 ---
 
-# Current Architecture State
+# Coding Standards
 
-Current execution flow:
+Python:
 
-CLI
+3.12+
 
-        |
-        v
 
-AndroidDevice
+Rules:
 
-        |
-        v
+- Type hints everywhere.
+- Public classes/functions require docstrings.
+- Use pathlib.
+- No wildcard imports.
+- No print() in production.
+- Use Chronicle logging.
+- Explicit exceptions.
+- One responsibility per file.
+- Avoid circular imports.
+
+
+---
+
+# Import Style
+
+Preferred:
+
+from axion.chronicle import get_logger
+
+from axion.vault import settings
+
+
+Avoid:
+
+from axion.chronicle.chronicle import Chronicle
+
+
+---
+
+# Naming Convention
+
+Products:
+
+Axion
+
+TULSI
+
+
+Subsystems:
+
+Brain
+
+Oracle
+
+Arsenal
 
 Nexus
 
-        |
-        v
+Chronicle
 
-ADB
+Vault
 
-
-Vault provides:
-
-- Paths
-- Settings
-- Runtime Context
+Sentinel
 
 
-Chronicle provides:
+Actions:
 
-- Logging
+OpenAppAction
+
+TapAction
+
+SwipeAction
 
 
-All modules communicate through defined boundaries.
+Models:
 
-No subsystem should bypass these layers.
+Device
+
+Workflow
+
+ActionRequest
+
 
 ---
 
-# Roadmap
-
-## v0.1.0 — Foundation
-
-✅ Repository
-
-✅ Chronicle
-
-✅ Vault
-
-✅ Nexus
-
-✅ Android Device
-
-⬜ CLI
-
-
-## v0.2.0 — Execution Engine
-
-- Registry
-- Dispatcher
-- Executor
-- Arsenal
-- Action system
-- Workflow Engine
-
-
-## v0.3.0 — Intelligence Layer
-
-- Brain
-- Oracle
-- AI integration
-- Speech processing
-- Intent understanding
-
-
-## v0.4.0 — Platform Expansion
-
-- Windows
-- Browser
-- Plugins
-- Linux
-- Docker
-- Home Assistant
-
-
-## v1.0.0 — TULSI Integration
-
-- TULSI integration
-- Plugin ecosystem
-- Stable public API
-- External integrations
-
----
-
-# Workflow
+# Development Workflow
 
 For every module:
 
 1. Review existing implementation.
-2. Refactor.
+2. Refactor carefully.
 3. Preserve functionality.
 4. Improve architecture.
 5. Improve imports.
@@ -547,11 +487,13 @@ For every module:
 8. Test.
 9. Commit.
 
+
 Never rewrite blindly.
+
 
 ---
 
-# Git Commit Style
+# Git Commit Convention
 
 feat(component):
 
@@ -563,83 +505,75 @@ docs(component):
 
 test(component):
 
+
 Example:
 
 feat(nexus): refactor adb transport layer
 
----
-
-# AI Instructions
-
-When continuing this project:
-
-DO NOT rewrite everything.
-
-DO NOT generate placeholder code.
-
-Preserve existing functionality.
-
-Refactor module-by-module.
-
-Produce complete production-ready files.
-
-Keep the project runnable after every migration.
-
-Always explain architectural decisions.
-
-Act as the project's software architect, not just a code generator.
-
-Maintain consistency with all decisions documented here.
 
 ---
 
-# Next Task
+# Architecture Decision Records
 
-Implement Axion CLI.
+Location:
 
-CLI responsibilities:
+docs/adr/
 
-- Parse user commands
-- Initialize Axion runtime
-- Call Device abstractions
-- Display results
 
-CLI must contain no business logic.
+Current ADRs:
 
-Execution flow:
+0001-runtime-directory.md
 
-CLI
+0002-nexus-transport-layer.md
 
-↓
-
-AndroidDevice
-
-↓
-
-Nexus
-
-↓
-
-ADB
 
 ---
 
-Last Updated
+# Roadmap
 
-2026-07-17
 
-Current Milestone:
+## v0.1.0 Foundation
 
-Sprint 1 Foundation
-
-Completed:
-
+- Repository structure
 - Chronicle
 - Vault
 - Nexus
-- Android Device
-- Android Device Integration Verification
+- Devices
+- CLI
 
-Next:
 
-CLI implementation
+## v0.2.0 Execution Engine
+
+- Registry
+- Dispatcher
+- Executor
+- Arsenal
+- Action system
+- Workflow engine
+
+
+## v0.3.0 Intelligence Layer
+
+- Brain
+- Oracle
+- AI integration
+- Speech processing
+- Intent understanding
+
+
+## v0.4.0 Platform Expansion
+
+- Windows
+- Browser
+- Linux
+- Docker
+- Home Assistant
+- Plugins
+
+
+## v1.0.0 TULSI Integration
+
+- TULSI integration
+- Plugin ecosystem
+- Stable public API
+- External integrations
