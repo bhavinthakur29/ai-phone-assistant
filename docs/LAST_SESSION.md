@@ -1,103 +1,51 @@
-# Last Session Update
-Date: 2026-07-17
+Axion Android automation progress:
 
 Completed:
+- Created modular CLI -> Dispatcher -> Executor -> Registry architecture.
+- Added Android input actions:
+  - android.home
+  - android.back
+  - android.tap
+  - android.swipe
+  - android.type
+- Added Android application actions:
+  - android.launch
+  - android.close
+  - android.apps
+- Added Oracle layer foundation:
+  - axion/oracle/android/
+  - AndroidScreenOracle for device observation.
+- CLI supports mixed result types:
+  - CommandResult actions
+  - Data-returning oracle actions
 
-Android Automation Layer
-
-Implemented and tested Android device control through ADB.
-
-Added commands:
-
-- android home
-- android back
-- android tap
-- android type
-- android swipe
-- android launch
-- android close
-- android apps
-
-
-Architecture verified:
+Current architecture:
 
 CLI
-    ↓
-Dispatcher
-    ↓
-Executor
-    ↓
-Action Registry
-    ↓
-Android Actions
-    ↓
-AndroidDevice
-    ↓
-ADBTransport
+ |
+ Dispatcher
+ |
+ Executor
+ |
+ Action Registry
+ |
+ Arsenal (actions)
+ |
+ Devices (hardware abstraction)
+ |
+ Nexus (ADB transport)
 
+New layer being added:
+Oracle
+ |
+ AndroidScreenOracle
+ |
+ ADB queries:
+   - wm size
+   - wm density
 
-Registered Actions:
+Next milestone:
+Add android screenshot capability.
 
-- android.home
-- android.back
-- android.tap
-- android.type
-- android.swipe
-- android.launch
-- android.close
-- android.apps
-
-
-Testing completed successfully:
-
-axion android home
-
-axion android tap 500 500
-
-axion android type hello
-
-axion android swipe 100 500 500 500
-
-axion android launch com.android.settings
-
-axion android close com.android.settings
-
-axion android apps
-
-
-Current Capability:
-
-Axion can now execute direct Android commands through the CLI.
-
-Implemented:
-- Device input control
-- Gesture control
-- Text input
-- Application launching
-- Application closing
-- Installed package listing
-
-
-Current Limitations:
-
-- Axion cannot see the screen
-- No UI element detection
-- No OCR
-- No screen understanding
-- No autonomous decision making
-
-
-Next Session:
-
-Implement Android perception layer.
-
-Planned:
-
-1. Screenshot capture
-2. UI hierarchy dump
-3. Screen state parser
-4. Vision module foundation
-
-Goal:
-
-Allow Axion to understand the current Android screen before performing actions.
+Purpose:
+Enable AI perception by allowing Axion to capture and analyse device state rather than only execute coordinates.
