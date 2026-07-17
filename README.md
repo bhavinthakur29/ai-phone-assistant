@@ -1,132 +1,154 @@
-# **AXION**
+# AXION
+
+> **Execution Engine for AI Systems**
 
 [![Release](https://img.shields.io/github/v/release/bhavinthakur29/axion-engine)](https://github.com/bhavinthakur29/axion-engine/releases)
 [![Python](https://img.shields.io/badge/Python-3.12+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![Status](https://img.shields.io/badge/Status-Active%20Development-orange)](https://github.com/bhavinthakur29/axion-engine)
-[![License](https://img.shields.io/badge/License-Apache%202.0-green)](LICENSE)
+[![License](https://img.shields.io/github/license/bhavinthakur29/axion-engine)](LICENSE)
 
-A modular and extensible automation engine.
-
-Axion provides the execution layer that allows AI systems and applications to interact with devices, operating systems, and services through a unified architecture.
+Axion is a modular, extensible automation engine that enables AI assistants and applications to interact with devices, operating systems, and services through a unified architecture.
 
 ---
 
 # Vision
 
-Axion is not an AI assistant.
+Axion is **not** an AI assistant.
 
-It is the automation engine behind AI assistants.
-```
+It is the execution engine that powers AI assistants.
+
+```text
 AI Assistant
-|
-v
-Axion
-|
-v
-Devices & Services
+      │
+      ▼
+    Axion
+      │
+      ▼
+Devices • Operating Systems • Services
 ```
 
-Future AI systems, including TULSI, will use Axion as their execution layer.
+Axion is designed to be AI-agnostic and reusable by any application that requires automation capabilities.
+
+One planned application is **TULSI**, a portable personal AI that will use Axion as its execution engine.
+
+---
+
+# Project Ecosystem
+
+```text
+TekSquad
+
+Current
+
+└── Axion
+    Automation Engine
+
+Planned
+
+└── TULSI
+    Portable Personal AI
+        │
+        ▼
+      Axion
+```
 
 ---
 
 # Features
 
-Current:
+## Current
 
-- Modular architecture
-- Centralized logging system
-- Configuration management
+- Modular subsystem architecture
+- Centralized logging (Chronicle)
+- Configuration management (Vault)
 - Runtime context management
-- Android ADB communication layer
+- Android ADB communication layer (Nexus)
 
-
-Planned:
+## Planned
 
 - Android automation
 - Windows automation
 - Linux automation
 - Browser automation
-- Docker control
+- Docker automation
 - Raspberry Pi support
 - Home Assistant integration
 - Cloud service automation
-- Plugin system
+- REST API integrations
+- Plugin ecosystem
+- Workflow engine
 
 ---
 
 # Architecture
 
-Axion is designed around independent subsystems.
-```
+Axion is composed of independent, replaceable subsystems.
+
+```text
 axion/
 
 ├── brain/
-│ AI integration
-│ NLP
-│ Speech
+│   AI integration
+│   NLP
+│   Speech
 │
 ├── oracle/
-│ Knowledge system
-│ Capabilities
-│ Preferences
+│   Knowledge
+│   Device capabilities
+│   User preferences
 │
 ├── arsenal/
-│ Executable actions
+│   Executable actions
 │
 ├── nexus/
-│ Communication layer
-│ ADB
-│ Win32
-│ Browser
+│   Communication layer
+│   ADB
+│   Win32
+│   Browser
 │
 ├── devices/
-│ Device abstractions
+│   Device abstractions
 │
 ├── vault/
-│ Configuration
-│ Runtime state
+│   Configuration
+│   Runtime state
 │
 ├── chronicle/
-│ Logging
+│   Logging
 │
 ├── sentinel/
-│ Monitoring
+│   Monitoring
 │
 ├── cli/
-│ User interface
+│   Command-line interface
 │
 └── workflows/
-Automation workflows
+    Automation workflows
 ```
 
 ---
 
 # Current Status
 
-Version:
-```v0.1.0-dev```
+**Version**
 
+```text
+v0.1.0-dev
+```
 
-Current milestone:
+**Sprint 1 — Foundation**
 
-Sprint 1 — Foundation
+Completed
 
-Completed:
+- ✅ Repository Architecture
+- ✅ Chronicle
+- ✅ Vault
+- ✅ Runtime Context
+- ✅ Nexus
 
-✅ Repository structure
+In Progress
 
-✅ Chronicle
-
-✅ Vault
-
-✅ Nexus
-
-
-Currently developing:
-
-⬜ Android Device abstraction
-
+- ⬜ Android Device Abstraction
 
 ---
 
@@ -134,55 +156,72 @@ Currently developing:
 
 Axion is currently under active development.
 
-Installation instructions will be added after the first stable release.
+Installation instructions will be provided with the first stable release.
 
 ---
 
 # Development
 
-Requirements:
+## Requirements
 
 - Python 3.12+
 - Android Debug Bridge (ADB)
 
-
-Clone:
+Clone the repository:
 
 ```bash
-git clone https://github.com/bhavinthakur29/ai-phone-assistant
+git clone https://github.com/bhavinthakur29/axion-engine.git
 
-cd axion
+cd axion-engine
 ```
-Create environment:
+
+Create a virtual environment:
+
 ```bash
 python -m venv .venv
 ```
-### Activate:
 
-- Windows:
+Activate it.
+
+### Windows
+
 ```bash
 .venv\Scripts\activate
 ```
-- Linux/macOS:
+
+### Linux/macOS
+
 ```bash
 source .venv/bin/activate
 ```
 
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
 # Development Philosophy
 
-Axion follows these principles:
+Axion follows a modular architecture based on a few core principles.
+
 - One responsibility per subsystem
-- Modular architecture
-- Replaceable components
+- Explicit dependency boundaries
 - AI-agnostic design
-- Explicit dependencies
-- No unnecessary coupling
-- Preserve functionality during refactoring
+- Composition over inheritance
+- Replaceable components
+- Production-ready code
+- Preserve functionality while refactoring
+
+---
 
 # Documentation
 
-Project documentation:
-```
+Project documentation is available in:
+
+```text
 docs/
 
 ├── AXION_CONTEXT.md
@@ -190,10 +229,45 @@ docs/
 └── LAST_SESSION.md
 ```
 
+---
+
+# Roadmap
+
+Current milestone:
+
+**Sprint 1 — Foundation**
+
+Upcoming milestones include:
+
+- Android Device abstraction
+- Command Line Interface
+- Action Registry
+- Executor
+- Arsenal
+- Brain
+- Oracle
+- Workflow Engine
+- Windows support
+- Browser automation
+- Plugin system
+- TULSI integration
+
+A detailed roadmap is available in:
+
+```text
+docs/ROADMAP.md
+```
+
+---
+
 # Contributing
 
-Contribution guidelines will be added when Axion reaches public development stage.
+Contributing guidelines will be published once Axion reaches its first public development milestone.
+
+---
 
 # License
 
-Not decided yet.
+Licensed under the Apache License, Version 2.0.
+
+See the [LICENSE](LICENSE) file for details.
