@@ -4,7 +4,7 @@
 
 Status:
 
-```
+```text
 ██████████ 100%
 ```
 
@@ -31,9 +31,7 @@ axion android swipe <x1> <y1> <x2> <y2>
 axion android type <text>
 ```
 
----
-
-## Application Control
+### Application Control
 
 ```bash
 axion android launch <package>
@@ -43,9 +41,7 @@ axion android close <package>
 axion android apps
 ```
 
----
-
-## Device Information
+### Device Information
 
 ```bash
 axion android screen
@@ -55,8 +51,8 @@ Returns:
 
 ```json
 {
- "resolution":"1080x2340",
- "density":"450"
+  "resolution": "1080x2340",
+  "density": "450"
 }
 ```
 
@@ -66,15 +62,17 @@ Returns:
 
 Status:
 
+```text
+████████░░ 80%
 ```
-██████░░░░ 60%
-```
+
+The perception layer is now functional and capable of observing both the visual screen and Android's UI hierarchy.
 
 ---
 
-## Completed
+# Completed
 
-### Screenshot Capture
+## Screenshot Capture
 
 Command:
 
@@ -84,15 +82,15 @@ axion android screenshot
 
 Output:
 
-```
+```text
 .axion/reports/screenshot_<timestamp>.png
 ```
 
 ---
 
-### Binary ADB Support
+## Binary ADB Support
 
-Added:
+Added to the Nexus transport:
 
 ```python
 execute_binary()
@@ -101,8 +99,9 @@ execute_binary()
 Supports:
 
 - screenshots
-- images
-- binary streams
+- binary files
+- image streams
+- future media transfer
 
 ---
 
@@ -110,7 +109,7 @@ Supports:
 
 Created:
 
-```
+```text
 axion/oracle/vision/
 
 ├── image.py
@@ -129,10 +128,10 @@ ImageLoader
 
 Converts:
 
-```
-PNG file
-    |
-    v
+```text
+PNG
+   │
+   ▼
 ImageFrame
 ```
 
@@ -140,9 +139,10 @@ Example:
 
 ```python
 ImageFrame(
- width=1080,
- height=2340,
- format="PNG"
+    path="...",
+    width=1080,
+    height=2340,
+    format="PNG",
 )
 ```
 
@@ -156,121 +156,286 @@ Implemented:
 ScreenAnalyzer
 ```
 
-Converts:
+Pipeline:
 
-```
+```text
 ImageFrame
-      |
-      v
+     │
+     ▼
 ScreenState
 ```
 
 Current analysis:
 
-- width
-- height
-- brightness
+- screen width
+- screen height
+- average brightness
 - average RGB color
 
 Example:
 
 ```python
 ScreenState(
- width=1080,
- height=2340,
- brightness=0.495,
- average_color=(55,128,196)
+    width=1080,
+    height=2340,
+    brightness=0.495,
+    average_color=(55, 128, 196),
 )
 ```
 
 ---
 
+# Android UI Perception
+
+Implemented:
+
+```bash
+axion android ui
+```
+
+This command now performs a complete UI dump using Android's Accessibility hierarchy.
+
+Pipeline:
+
+```text
+ADB
+
+ │
+
+uiautomator dump
+
+ │
+
+XML hierarchy
+
+ │
+
+UIParser
+
+ │
+
+UIAnalyzer
+```
+
+---
+
+## UI Parser
+
+Implemented:
+
+```python
+UIParser
+```
+
+Converts Android XML into structured objects.
+
+Each node becomes:
+
+```python
+UIElement
+```
+
+Containing:
+
+- text
+- resource id
+- class name
+- clickable flag
+- bounds
+- calculated center coordinate
+
+Example:
+
+```python
+UIElement(
+    text="USB tethering",
+    resource_id="...",
+    class_name="android.widget.TextView",
+    clickable=False,
+    bounds="[80,420][920,520]",
+)
+```
+
+---
+
+## UI Analyzer
+
+Implemented:
+
+```python
+UIAnalyzer
+```
+
+Current capabilities:
+
+- summarize UI
+- list clickable elements
+- search by visible text
+- calculate tap coordinates
+
+Summary example:
+
+```python
+{
+    "total_elements": 44,
+    "clickable_elements": 7,
+    "visible_text": [
+        "File Transfer",
+        "USB tethering",
+        "MIDI",
+        "PTP",
+        "No data transfer",
+        "USB Preferences",
+    ],
+}
+```
+
+---
+
+## AndroidUI Provider
+
+Implemented:
+
+```python
+AndroidUI
+```
+
+Responsibilities:
+
+- dump current UI hierarchy
+- parse XML
+- return structured UI elements
+
+---
+
 # Current Architecture
 
-```
+```text
 CLI
 
- |
+ │
 
 Dispatcher
 
- |
+ │
 
 Executor
 
- |
+ │
 
 Registry
 
- |
+ │
 
-Arsenal
+Arsenal (Actions)
 
- |
+ │
 
 Oracle
 
- |
+ ├── Android
+ │     ├── Screen
+ │     ├── Screenshot
+ │     └── UI
+ │
+ └── Vision
+       ├── ImageLoader
+       └── ScreenAnalyzer
 
-Vision Layer
-
- |
+ │
 
 Nexus ADB
 ```
 
 ---
 
-# Next Task
+# Current Capabilities
 
-## Phase 2.2 — UI Perception
+Axion can now:
 
-Create:
+- control Android navigation
+- launch and close applications
+- list installed applications
+- retrieve screen information
+- capture screenshots
+- load and analyze images
+- dump Android UI hierarchy
+- parse UI XML into structured objects
+- locate visible text
+- identify clickable UI elements
+- calculate screen coordinates from UI bounds
 
+---
+
+# Next Phase
+
+## Phase 2.5 — UI Intelligence
+
+Planned improvements:
+
+- clickable parent resolution
+- fuzzy text search
+- UI element indexing
+- cached UI hierarchy
+- semantic element lookup
+
+Future commands:
+
+```bash
+axion android find "Settings"
+
+axion android tap-text "USB tethering"
 ```
-axion/oracle/vision/ui.py
-```
 
-Goal:
+Expected pipeline:
 
-Detect:
+```text
+Observe
 
-- text regions
-- buttons
-- interactive areas
+ │
 
-Future output:
+Parse UI
 
-```json
-{
- "elements":[
-   {
-    "type":"button",
-    "bounds":[100,900,880,120]
-   }
- ]
-}
+ │
+
+Understand
+
+ │
+
+Locate Target
+
+ │
+
+Plan
+
+ │
+
+Act
 ```
 
 ---
 
-Long term pipeline:
+# Long-Term Roadmap
 
+```text
+ADB Communication
+        │
+        ▼
+Device Perception
+        │
+        ▼
+UI Understanding
+        │
+        ▼
+Vision Understanding
+        │
+        ▼
+Planning Engine
+        │
+        ▼
+Autonomous Execution
 ```
-Observe
-   |
-Understand
-   |
-Decide
-   |
-Act
-```
 
-Axion is moving from:
+Axion is no longer just an ADB command wrapper.
 
-"command executor"
-
-to:
-
-"autonomous Android agent"
-```
+It now has the foundations of an autonomous Android agent capable of observing, understanding, and interacting with the device through both vision and UI perception.

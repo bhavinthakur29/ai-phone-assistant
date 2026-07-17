@@ -1,19 +1,45 @@
-from axion.oracle.vision.image import ImageLoader
-from axion.oracle.vision.analyzer import ScreenAnalyzer
-
-
-loader = ImageLoader()
-
-frame = loader.load(
-    ".axion/reports/screenshot_20260717_175834.png"
+from axion.oracle.android.ui import (
+    AndroidUI,
+    UIAnalyzer,
 )
 
 
-analyzer = ScreenAnalyzer()
+ui = AndroidUI()
 
-state = analyzer.analyze(
-    frame
+
+elements = ui.dump()
+
+
+print(
+    "Elements:",
+    len(elements)
 )
 
 
-print(state)
+analyzer = UIAnalyzer()
+
+
+summary = analyzer.summarize(
+    elements
+)
+
+
+print(
+    summary
+)
+
+
+print("\nClickable elements:\n")
+
+
+for element in analyzer.clickable_elements(elements):
+
+    print(
+        {
+            "text": element.text,
+            "resource_id": element.resource_id,
+            "class": element.class_name,
+            "bounds": element.bounds,
+            "center": element.center,
+        }
+    )

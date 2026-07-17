@@ -47,20 +47,24 @@ def create_parser() -> argparse.ArgumentParser:
         required=True,
     )
 
+
     commands.add_parser(
         "status",
         help="Check Android connection",
     )
+
 
     commands.add_parser(
         "home",
         help="Press home button",
     )
 
+
     commands.add_parser(
         "back",
         help="Press back button",
     )
+
 
     tap = commands.add_parser(
         "tap",
@@ -145,14 +149,22 @@ def create_parser() -> argparse.ArgumentParser:
         help="List installed applications",
     )
 
+
     commands.add_parser(
         "screenshot",
         help="Capture current Android screen",
     )
 
+
     commands.add_parser(
         "screen",
         help="Get screen information",
+    )
+
+
+    commands.add_parser(
+        "ui",
+        help="Dump Android UI hierarchy",
     )
 
 
@@ -182,6 +194,7 @@ def execute_command(
 
 
     if args.platform == "android":
+
 
         if args.command == "status":
 
@@ -246,14 +259,21 @@ def execute_command(
         elif args.command == "apps":
 
             command = "android.apps"
-            
+
+
         elif args.command == "screenshot":
 
             command = "android.screenshot"
 
+
         elif args.command == "screen":
 
             command = "android.screen"
+
+
+        elif args.command == "ui":
+
+            command = "android.ui"
 
 
 

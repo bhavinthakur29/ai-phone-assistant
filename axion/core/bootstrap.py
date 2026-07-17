@@ -16,6 +16,7 @@ from axion.arsenal.android.apps import (
 )
 from axion.arsenal.android.screen import ScreenAction
 from axion.arsenal.android.screenshot import ScreenshotAction
+from axion.arsenal.android.ui import UIAction
 
 
 def create_registry() -> ActionRegistry:
@@ -73,6 +74,11 @@ def create_registry() -> ActionRegistry:
     registry.register(
         "android.screen",
         ScreenAction,
+    )
+
+    registry.register(
+        "android.ui",
+        UIAction,
     )
 
     return registry
