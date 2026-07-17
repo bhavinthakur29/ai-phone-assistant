@@ -1,17 +1,8 @@
-class Parser:
-
+class IntentParser:
+    """Translates natural language into Axion engine commands."""
+    
     @staticmethod
-    def parse(text: str):
-
-        text = text.lower().strip()
-
-        if text.startswith("open "):
-
-            app = text.replace("open ", "")
-
-            return {
-                "action": "open_app",
-                "app": app
-            }
-
-        raise ValueError("Unknown command")
+    def parse(raw_text: str) -> str:
+        # TODO: Implement NLP logic or Regex mapping here later
+        # For now, it just passes the raw text through
+        return raw_text.strip()
