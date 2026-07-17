@@ -1,96 +1,51 @@
 # Axion Last Session
 
-## Current Status
+## Phase 1 — Android Control Layer
 
-Axion has successfully completed the first Android automation milestone.
+Status:
 
-The system can now:
+```
+██████████ 100%
+```
 
-- Connect with Android devices through ADB
-- Execute device actions
-- Manage applications
-- Read device information
-- Capture screen state
+Completed.
 
 ---
 
-# Completed Modules
+## Working Android Commands
 
-## Core Engine
-
-Completed:
-
-- CLI command parser
-- Command dispatcher
-- Action executor
-- Action registry
-- Runtime bootstrap
-
-Architecture:
-
-```
-CLI
- |
-Dispatcher
- |
-Executor
- |
-Registry
- |
-Arsenal Actions
- |
-Devices / Oracle
- |
-Nexus
-```
-
----
-
-# Android Automation
-
-## Input Control
-
-Working commands:
+### Navigation
 
 ```bash
 axion android home
 axion android back
+```
+
+### Input
+
+```bash
 axion android tap <x> <y>
+
 axion android swipe <x1> <y1> <x2> <y2>
+
 axion android type <text>
 ```
 
-Capabilities:
-
-- Home button control
-- Back navigation
-- Screen tapping
-- Swipe gestures
-- Text injection
-
 ---
 
-# Application Management
-
-Implemented:
+## Application Control
 
 ```bash
 axion android launch <package>
+
 axion android close <package>
+
 axion android apps
 ```
 
-Capabilities:
-
-- Launch Android applications
-- Force stop applications
-- List installed packages
-
 ---
 
-# Device Observation
-
-Implemented:
+## Device Information
 
 ```bash
 axion android screen
@@ -100,22 +55,26 @@ Returns:
 
 ```json
 {
-  "resolution": "1080x2340",
-  "density": "450"
+ "resolution":"1080x2340",
+ "density":"450"
 }
 ```
 
-Used for:
+---
 
-- Coordinate mapping
-- Screen scaling
-- Future UI understanding
+# Phase 2 — Perception Layer
+
+Status:
+
+```
+██████░░░░ 60%
+```
 
 ---
 
-# Visual Capture System
+## Completed
 
-## Implemented
+### Screenshot Capture
 
 Command:
 
@@ -129,17 +88,11 @@ Output:
 .axion/reports/screenshot_<timestamp>.png
 ```
 
-Example:
-
-```
-.axion/reports/screenshot_20260717_175834.png
-```
-
 ---
 
-## Binary ADB Support
+### Binary ADB Support
 
-Enhanced Nexus transport with:
+Added:
 
 ```python
 execute_binary()
@@ -147,195 +100,177 @@ execute_binary()
 
 Supports:
 
-- Screenshots
-- Images
-- Files
-- Media streams
-
-ADB layer now handles:
-
-- Text output
-- Binary output
+- screenshots
+- images
+- binary streams
 
 ---
 
-# Current Axion Architecture
+# Vision Foundation
+
+Created:
 
 ```
-                 CLI
-                  |
-                  v
-             Dispatcher
-                  |
-                  v
-              Executor
-                  |
-                  v
-             Action Registry
-                  |
-        ---------------------
-        |                   |
-     Arsenal             Oracle
-        |                   |
-        v                   v
-   Android Actions     Device Analysis
-        |
-        v
-      Devices
-        |
-        v
-      Nexus ADB
+axion/oracle/vision/
+
+├── image.py
+└── analyzer.py
 ```
 
 ---
 
-# Current Capabilities
+## Image Loader
 
-Axion can now:
+Implemented:
 
-✅ Control Android devices  
-✅ Execute touch actions  
-✅ Navigate screens  
-✅ Launch applications  
-✅ Close applications  
-✅ Inspect installed apps  
-✅ Read screen information  
-✅ Capture screenshots  
-
----
-
-# Current Milestone
-
-## Phase 1 — Android Control Layer
-
-Status:
-
-```
-██████████ 100%
+```python
+ImageLoader
 ```
 
-Completed.
-
----
-
-# Next Milestone
-
-## Phase 2 — Perception Layer
-
-Goal:
-
-Move Axion from:
+Converts:
 
 ```
-Execute commands
+PNG file
+    |
+    v
+ImageFrame
 ```
 
-to:
+Example:
 
-```
-Observe → Understand → Decide → Act
+```python
+ImageFrame(
+ width=1080,
+ height=2340,
+ format="PNG"
+)
 ```
 
 ---
 
-## Planned Components
+## Screen Analyzer
+
+Implemented:
+
+```python
+ScreenAnalyzer
+```
+
+Converts:
+
+```
+ImageFrame
+      |
+      v
+ScreenState
+```
+
+Current analysis:
+
+- width
+- height
+- brightness
+- average RGB color
+
+Example:
+
+```python
+ScreenState(
+ width=1080,
+ height=2340,
+ brightness=0.495,
+ average_color=(55,128,196)
+)
+```
+
+---
+
+# Current Architecture
+
+```
+CLI
+
+ |
+
+Dispatcher
+
+ |
+
+Executor
+
+ |
+
+Registry
+
+ |
+
+Arsenal
+
+ |
+
+Oracle
+
+ |
+
+Vision Layer
+
+ |
+
+Nexus ADB
+```
+
+---
+
+# Next Task
+
+## Phase 2.2 — UI Perception
 
 Create:
 
 ```
-axion/
-└── oracle/
-    └── vision/
-        ├── __init__.py
-        ├── image.py
-        └── analyzer.py
+axion/oracle/vision/ui.py
 ```
 
----
-
-## Features Planned
-
-### 1. Screenshot Loader
-
-Purpose:
-
-- Read captured screenshots
-- Convert images into analyzable objects
-
-
-### 2. Screen Analyzer
-
-Purpose:
-
-Extract:
-
-- Screen dimensions
-- Visual state
-- UI information
-
-
-### 3. OCR Layer
-
-Purpose:
+Goal:
 
 Detect:
 
-- Text
-- Buttons
-- Labels
-- Input fields
-
-
-### 4. UI Understanding
+- text regions
+- buttons
+- interactive areas
 
 Future output:
 
 ```json
 {
-  "screen": "settings",
-  "elements": [
-    {
-      "type": "button",
-      "text": "Wi-Fi",
-      "location": [540,450]
-    }
-  ]
+ "elements":[
+   {
+    "type":"button",
+    "bounds":[100,900,880,120]
+   }
+ ]
 }
 ```
 
 ---
 
-# Next Goal
-
-Build:
-
-```bash
-axion android analyze
-```
-
-Expected flow:
+Long term pipeline:
 
 ```
-Screenshot
-    |
-    v
-Image Loader
-    |
-    v
-Vision Analyzer
-    |
-    v
-Screen State
-    |
-    v
-AI Decision Layer
+Observe
+   |
+Understand
+   |
+Decide
+   |
+Act
 ```
 
----
+Axion is moving from:
 
-# Recommended Commit
+"command executor"
 
-```bash
-git add .
-git commit -m "feat: add android screenshot oracle with binary adb support"
+to:
+
+"autonomous Android agent"
 ```

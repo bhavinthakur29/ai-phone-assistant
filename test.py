@@ -1,30 +1,19 @@
-from axion.core import ActionRegistry, Executor, Dispatcher
-from axion.arsenal import Action
+from axion.oracle.vision.image import ImageLoader
+from axion.oracle.vision.analyzer import ScreenAnalyzer
 
 
-class TestAction(Action):
+loader = ImageLoader()
 
-    name = "test"
-
-    def execute(self, args=None):
-        return f"Received: {args}"
-
-
-registry = ActionRegistry()
-
-registry.register(
-    "test",
-    TestAction()
+frame = loader.load(
+    ".axion/reports/screenshot_20260717_175834.png"
 )
 
 
-executor = Executor(registry)
+analyzer = ScreenAnalyzer()
 
-dispatcher = Dispatcher(executor)
-
-
-print(
-    dispatcher.dispatch(
-        "test hello world"
-    )
+state = analyzer.analyze(
+    frame
 )
+
+
+print(state)
