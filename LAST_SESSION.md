@@ -4,122 +4,81 @@ Date: 2026-07-17
 
 Project: Axion
 
-Current Version:
+Version:
 v0.1.0-dev
 
 ---
 
 ## Session Summary
 
-Sprint 1 has officially begun.
+Chronicle has been completed.
 
-This project is now following a production-style development workflow.
+The runtime architecture has been improved.
 
-Repository restructuring is complete.
+Instead of storing logs directly in the repository root, Axion now uses a dedicated runtime directory:
 
-The migration strategy has been finalized.
+.axion/
 
-The first subsystem to be implemented is Chronicle.
+This directory will eventually contain:
 
----
+- logs
+- cache
+- config
+- temp
+- reports
+- workflows
+- plugin data
+- session data
 
-## Repository Status
-
-✅ New package structure created
-
-✅ Legacy modules copied into new package
-
-✅ Legacy folders retained as fallback
+This separates runtime state from source code.
 
 ---
 
 ## Architecture Decisions
 
-Chronicle is now the first foundational subsystem.
+ADR-0001
 
-Every module must use Chronicle for logging.
+Runtime files belong inside `.axion/`.
 
-No module may import Python's logging package directly.
+No subsystem should create arbitrary folders.
 
-The public API will always be:
-
-```python
-from axion.chronicle import get_logger
-```
-
-Chronicle owns:
-
-- Console logging
-- File logging
-- Log formatting
-- Future JSON logging
-- Future remote logging
+Vault will become the single source of runtime paths.
 
 ---
 
-## Development Workflow
+## Completed
 
-Every subsystem follows:
+✅ Repository structure
 
-1. Design
-2. Implementation
-3. Refactor
-4. Test
-5. Git Commit
+✅ Chronicle
 
-The repository must remain runnable after every completed subsystem.
+✅ Runtime directory design
 
 ---
 
-## Current Sprint
+## Pending
 
 Sprint 1
 
-### Completed
+⬜ Vault
 
-- Repository structure
-- Migration plan
+⬜ Nexus
 
-### In Progress
-
-- Chronicle
-
-### Pending
-
-- Vault
-- Nexus
-- AndroidDevice
+⬜ Android Device
 
 ---
 
 ## Next Task
 
-Implement Chronicle.
-
-Files:
-
-axion/chronicle/__init__.py
-
-axion/chronicle/chronicle.py
-
-After Chronicle is complete:
-
 Implement Vault.
 
----
+Vault will own:
 
-## Instructions for Future ChatGPT
+- runtime paths
+- configuration
+- environment
+- shared settings
 
-Continue from this point.
+Chronicle will later obtain its log directory from Vault instead of constructing paths itself.
 
-Do not redesign the architecture.
-
-Do not move files again.
-
-Implement production-ready modules.
-
-Maintain the established naming philosophy.
-
-Preserve existing functionality.
-
-Treat Axion as a long-term software framework.
+The project remains fully runnable.

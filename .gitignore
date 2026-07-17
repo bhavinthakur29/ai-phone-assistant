@@ -1,21 +1,33 @@
-# Virtual environment
-.venv/
-
-# Python cache
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+*.pyo
 
-# VS Code
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
 .vscode/
+.idea/
 
-# Environment variables
-.env
+# OS
+.DS_Store
+Thumbs.db
+
+# Runtime
+.axion/cache/
+.axion/temp/
+.axion/reports/
 
 # Logs
-*.log
+.axion/logs/
 
-# macOS
-.DS_Store
+# Local configuration
+.axion/config/*.local.*
 
-# Windows
-Thumbs.db
+# Test output
+.pytest_cache/
+.coverage
+htmlcov/

@@ -16,15 +16,16 @@ from __future__ import annotations
 
 import logging
 from logging.handlers import RotatingFileHandler
-from pathlib import Path
+from axion.vault import paths
+
+MAX_LOG_SIZE = 5 * 1024 * 1024
+BACKUP_COUNT = 5
 
 # -----------------------------------------------------------------------------
-# Configuration
+# Runtime Files
 # -----------------------------------------------------------------------------
 
-LOG_DIRECTORY = Path("logs")
-LOG_DIRECTORY.mkdir(parents=True, exist_ok=True)
-
+LOG_DIRECTORY = paths.logs
 LOG_FILE = LOG_DIRECTORY / "axion.log"
 
 DEFAULT_LOG_LEVEL = logging.INFO
@@ -70,13 +71,16 @@ def _initialize_logging() -> None:
 
     file_handler = RotatingFileHandler(
         LOG_FILE,
-        maxBytes=5 * 1024 * 1024,
-        backupCount=5,
+        maxBytes=MAX_LOG_SIZE,
+        backupCount=BACKUP_COUNT,
         encoding="utf-8",
     )
     file_handler.setFormatter(formatter)
 
     root_logger = logging.getLogger()
+
+    if root_logger.handlers:
+        root_logger.handlers.clear()
 
     root_logger.setLevel(DEFAULT_LOG_LEVEL)
     root_logger.addHandler(console_handler)
@@ -88,20 +92,22 @@ def _initialize_logging() -> None:
 # -----------------------------------------------------------------------------
 # Public API
 # -----------------------------------------------------------------------------
+class Chronicle:
 
-def get_logger(name: str) -> logging.Logger:
-    """
-    Return a configured logger.
+    @staticmethod
+    def get_logger(name: str) -> logging.Logger:
+        """
+        Return a configured logger.
 
-    Parameters
-    ----------
-    name:
-        Usually __name__.
+        Parameters
+        ----------
+        name:
+            Usually __name__.
 
-    Returns
-    -------
-    logging.Logger
-    """
-    _initialize_logging()
+        Returns
+        -------
+        logging.Logger
+        """
+        _initialize_logging()
 
-    return logging.getLogger(name)
+        return logging.getLogger(name)
