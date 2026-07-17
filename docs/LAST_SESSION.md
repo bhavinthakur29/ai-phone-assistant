@@ -19,7 +19,7 @@ v0.1.0-dev
 
 # Current Milestone
 
-Sprint 1 — Foundation
+Sprint 2 — Execution Engine Foundation
 
 
 ---
@@ -42,18 +42,22 @@ Completed:
 
 ✅ AndroidDevice integration verification
 
-✅ CLI
+✅ Arsenal Action base abstraction
 
-✅ Python package configuration
+✅ Core ActionRegistry
 
-✅ Installable CLI entry point
+✅ Core Executor
+
+✅ Core Dispatcher
 
 
 Pending:
 
-⬜ CLI architecture refactoring
+⬜ Android Actions
 
-⬜ Sprint 2 — Execution Engine
+⬜ CLI integration with Execution Engine
+
+⬜ Legacy module migration
 
 
 ---
@@ -63,19 +67,27 @@ Pending:
 Execution flow:
 
 
-Terminal
-
-↓
-
-axion
-
-↓
-
 CLI
 
 ↓
 
-AndroidDevice
+Dispatcher
+
+↓
+
+Executor
+
+↓
+
+ActionRegistry
+
+↓
+
+Arsenal Actions
+
+↓
+
+Devices
 
 ↓
 
@@ -83,7 +95,7 @@ Nexus
 
 ↓
 
-ADB
+External Systems
 
 
 
@@ -121,75 +133,53 @@ Chronicle
 # Recent Work Completed
 
 
-## Android Device Abstraction
+## Core Execution Engine
+
 
 Implemented:
 
-- High-level Android interface.
-- Nexus delegation.
-- Device operations.
-- Structured command results.
-- Chronicle logging.
+- Action abstraction inside Arsenal.
+- ActionRegistry for managing executable actions.
+- Executor for controlled action execution.
+- Dispatcher refactor for command routing.
 
 
 Verified:
 
-- Device connection.
-- Home button.
-- Back button.
-- Tap action.
+- Action registration.
+- Action lookup.
+- Action execution.
+- Command parsing and forwarding.
 
 
----
-
-## CLI
-
-Implemented:
-
-- Command-line interface.
-- Android command parsing.
-- Device abstraction integration.
-- Result output.
+Test flow:
 
 
-Verified:
+Input:
 
-axion android status
-
-axion android home
-
-axion android back
-
-axion android tap 500 500
-
-axion android type "hello"
-
-axion android launch com.android.settings
+test hello world
 
 
-All commands executed successfully.
+Flow:
+
+Dispatcher
+
+↓
+
+Executor
+
+↓
+
+ActionRegistry
+
+↓
+
+TestAction
 
 
----
+Result:
 
-## Packaging
-
-Implemented:
-
-- pyproject.toml
-- Editable package installation
-- Python package metadata
-- CLI entry point
-
-
-Verified:
-
-pip install -e .
-
-axion android status
-
-
-Axion now runs as an installable Python application.
+Action executed successfully.
 
 
 ---
@@ -211,7 +201,7 @@ Vault is the single source of runtime paths.
 
 ## ADR-0002
 
-Nexus is the communication layer only.
+Nexus is only the communication layer.
 
 Higher-level modules communicate through Nexus.
 
@@ -229,70 +219,110 @@ AndroidDevice must not contain ADB implementation details.
 
 ---
 
+## ADR-0004
+
+Arsenal contains executable actions.
+
+Actions define capabilities but do not handle:
+
+- command parsing
+- routing
+- low-level communication
+
+
+Execution is controlled through:
+
+Dispatcher
+
+↓
+
+Executor
+
+↓
+
+Action
+
+
+---
+
 # Latest Commit
-
-build(packaging): add installable Python package
-
-Previous:
 
 f669bec
 
 test(devices): verify Android device operations
 
 
+Previous:
+
+4efa82d
+
+feat(devices): implement Android device abstraction
+
+
 ---
 
 # Next Task
 
-Refactor the CLI architecture.
+Implement Android Arsenal Actions.
 
 
-Goals:
+Create actions:
 
-- Keep main.py as the entry point only.
-- Move argument parsing into dedicated modules.
-- Add command handlers under cli/commands/.
-- Preserve the current public CLI interface.
-
-
-Target structure:
-
-axion/
-
-└── cli/
-
-    ├── main.py
-
-    ├── parser.py
-
-    └── commands/
-
-        ├── __init__.py
-
-        ├── android.py
-
-        └── system.py
+- HomeAction
+- BackAction
+- TapAction
+- SwipeAction
+- TypeAction
+- LaunchAppAction
 
 
-After CLI refactoring, begin Sprint 2 — Execution Engine.
+Actions must:
+
+- Use AndroidDevice.
+- Never communicate directly with Nexus.
+- Remain independent from CLI.
+
+
+Expected flow:
+
+
+CLI
+
+↓
+
+Dispatcher
+
+↓
+
+Executor
+
+↓
+
+AndroidAction
+
+↓
+
+AndroidDevice
+
+↓
+
+Nexus
+
+↓
+
+ADB
 
 
 ---
 
 # Notes
 
-Sprint 1 Foundation is functionally complete.
-
-Axion is now:
-
-- Modular
-- Installable
-- Runnable through the `axion` command
-- Architecturally layered
-- Ready for Execution Engine development
+Project remains fully runnable.
 
 Development rules:
 
 1. Maintain architecture boundaries.
 2. Update LAST_SESSION after every milestone.
 3. Update AXION_CONTEXT only when architecture changes.
+4. Do not migrate legacy functionality directly into Core.
+5. Move capabilities into Arsenal Actions.
