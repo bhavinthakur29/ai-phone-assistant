@@ -9,6 +9,11 @@ from axion.arsenal.android.back import BackAction
 from axion.arsenal.android.tap import TapAction
 from axion.arsenal.android.type_text import TypeTextAction
 from axion.arsenal.android.swipe import SwipeAction
+from axion.arsenal.android.apps import (
+    LaunchAppAction,
+    CloseAppAction,
+    ListAppsAction,
+)
 
 
 def create_registry() -> ActionRegistry:
@@ -41,6 +46,21 @@ def create_registry() -> ActionRegistry:
     registry.register(
         "android.swipe",
         SwipeAction,
+    )
+
+    registry.register(
+        "android.launch",
+        LaunchAppAction,
+    )
+
+    registry.register(
+        "android.close",
+        CloseAppAction,
+    )
+
+    registry.register(
+        "android.apps",
+        ListAppsAction,
     )
 
     return registry

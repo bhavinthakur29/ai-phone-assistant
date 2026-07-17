@@ -256,3 +256,52 @@ class AndroidDevice:
                 "1",
             ]
         )
+
+
+    def close_app(
+        self,
+        package_name: str,
+    ) -> CommandResult:
+        """
+        Force stop Android application.
+
+        Parameters
+        ----------
+        package_name:
+            Android package identifier.
+        """
+
+        logger.info(
+            "Closing app: %s",
+            package_name,
+        )
+
+        return self._transport.execute(
+            [
+                "shell",
+                "am",
+                "force-stop",
+                package_name,
+            ]
+        )
+
+
+    def list_apps(
+        self,
+    ) -> CommandResult:
+        """
+        List installed Android applications.
+        """
+
+        logger.info(
+            "Listing installed apps."
+        )
+
+        return self._transport.execute(
+            [
+                "shell",
+                "pm",
+                "list",
+                "packages",
+            ]
+        )
