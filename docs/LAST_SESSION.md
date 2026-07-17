@@ -42,10 +42,12 @@ Completed:
 
 ✅ AndroidDevice integration verification
 
+✅ CLI
+
 
 Pending:
 
-⬜ CLI
+⬜ Sprint 1.5 Stabilization
 
 
 ---
@@ -124,6 +126,37 @@ Verified:
 - Tap action.
 
 
+
+---
+
+## CLI Interface
+
+Implemented:
+
+- Command parsing.
+- Android command interface.
+- Device abstraction integration.
+- User-facing command execution.
+
+
+Verified:
+
+python -m axion.cli.main android status
+
+python -m axion.cli.main android home
+
+python -m axion.cli.main android back
+
+python -m axion.cli.main android tap 500 500
+
+python -m axion.cli.main android type "hello"
+
+python -m axion.cli.main android launch com.android.settings
+
+
+All tested commands executed successfully.
+
+
 ---
 
 # Architecture Decisions
@@ -139,6 +172,7 @@ Runtime files belong inside:
 Vault is the single source of runtime paths.
 
 
+
 ---
 
 ## ADR-0002
@@ -150,6 +184,7 @@ Higher-level modules communicate through Nexus.
 Nexus contains no business logic.
 
 
+
 ---
 
 ## ADR-0003
@@ -157,6 +192,7 @@ Nexus contains no business logic.
 Devices provide high-level interfaces over Nexus transports.
 
 AndroidDevice must not contain ADB implementation details.
+
 
 
 ---
@@ -179,38 +215,18 @@ feat(devices): implement Android device abstraction
 
 # Next Task
 
-Implement Axion CLI.
+Sprint 1.5 — Stabilization
 
 
-Responsibilities:
+Tasks:
 
-- Parse user commands.
-- Initialize Axion runtime.
-- Call device abstractions.
-- Display results.
-
-
-CLI must:
-
-- Contain no business logic.
-- Not directly call Nexus.
-- Use existing abstractions.
-
-
----
-
-# Initial CLI Commands
-
-
-Example:
-
-axion android status
-
-axion android home
-
-axion android back
-
-axion android tap 500 500
+- Add package metadata.
+- Configure CLI entry point.
+- Review pyproject.toml.
+- Remove remaining legacy imports.
+- Move manual testing into test suite.
+- Add mocked unit tests.
+- Clean up deprecated modules.
 
 
 ---
