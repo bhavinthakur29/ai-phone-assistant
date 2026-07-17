@@ -442,7 +442,14 @@ Sprint 1 — Foundation
     - Runtime context
 
 
-⬜ Nexus
+✅ Nexus
+
+    - ADB transport
+    - Public API
+    - CommandResult handling
+    - Error handling
+    - Chronicle integration
+
 
 ⬜ Android Device
 

@@ -11,26 +11,17 @@ v0.1.0-dev
 
 ## Session Summary
 
-Chronicle has been completed and validated.
+Vault foundation has been completed.
 
-The runtime architecture has been improved by introducing Vault as the owner of runtime paths.
+The configuration architecture has been improved by separating:
 
-Instead of storing runtime files directly from individual subsystems, Axion now uses a dedicated runtime directory:
+- runtime paths
+- application settings
+- runtime context
 
-.axion/
+Nexus communication layer has also been implemented.
 
-This directory will eventually contain:
-
-- logs
-- cache
-- config
-- temp
-- reports
-- workflows
-- plugin data
-- session data
-
-This separates runtime state from source code.
+The legacy ADB controller has been refactored into a dedicated Nexus transport layer.
 
 ---
 
@@ -42,7 +33,7 @@ Runtime files belong inside `.axion/`.
 
 No subsystem should create arbitrary folders.
 
-Vault is now the single source of runtime paths.
+Vault is the single source of runtime paths.
 
 ---
 
@@ -50,115 +41,230 @@ Vault is now the single source of runtime paths.
 
 ✅ Repository structure
 
-✅ Chronicle
+---
+
+## Chronicle
+
+Completed:
 
 - Centralized logging system
 - Console and file logging
-- Rotating log handler
+- Rotating file handler
 - Single initialization protection
 - Module-based loggers
-
-✅ Vault runtime path management
-
-- Centralized `.axion/` directory handling
-- Runtime directory creation
-- Log path ownership moved from Chronicle to Vault
+- Runtime log directory obtained through Vault
 
 ---
 
-## Migration Completed
+## Vault
 
-Before:
+Completed:
 
-Chronicle owned runtime paths.
+### Runtime Paths
 
+- Centralized `.axion/` directory ownership
+- Logs directory management
+- Runtime folder structure preparation
 
-Chronicle
-|
-+-- creates .axion/
-+-- creates logs/
+### Configuration System
 
+Created:
 
-After:
+- settings.py
 
-Vault owns runtime paths.
+Configuration is now accessed through:
+
+from axion.vault import settings
+
+Example:
+
+settings.adb.path
+settings.llm.model
+settings.speech.wake_word
+
+### Backward Compatibility
+
+Legacy Config access remains supported:
+
+from axion.vault import Config
+
+The compatibility layer maps old configuration values to the new settings system.
+
+### Runtime Context
+
+Created:
+
+- context.py
+
+Current runtime state:
+
+- session_id
+- started_at
+- environment
+
+---
+
+## Nexus
+
+Completed:
+
+Created communication layer:
+
+axion/nexus/
+
+- adb.py
+- exceptions.py
+- __init__.py
+
+Responsibilities:
+
+- Execute ADB commands
+- Return structured command results
+- Handle communication failures
+- Integrate with Chronicle logging
+
+Implemented:
+
+- ADBTransport
+- CommandResult
+- ADBError
+- Public Nexus API
+
+Example:
+
+from axion.nexus import ADBTransport
+
+adb = ADBTransport()
+
+result = adb.execute(
+    ["devices"]
+)
+
+---
+
+## Validation
+
+Tested successfully:
+
+ADB communication:
+
+List of devices attached
+192.168.0.155:5555      device
+
+Result:
+
+True
+
+---
+
+Chronicle integration:
+
+Log generated successfully:
+
+[INFO] [axion.nexus.adb] Executing ADB command: ['adb', 'devices']
+
+---
+
+## Current Architecture
+
+Brain
+
+    |
+    v
+
+Arsenal
+
+    |
+    v
+
+Devices
+
+    |
+    v
+
+Nexus
+
+    |
+    v
+
+ADB
 
 
 Vault
-|
-+-- Runtime paths
-|
-+-- .axion/logs
+
+    |
+    +-- Paths
+    +-- Settings
+    +-- Context
+
 
 Chronicle
-|
-+-- consumes Vault paths
-+-- manages logging only
 
-
----
-
-## Current Vault Structure
-
-
-axion/vault/
-
-init.py
-
-vault.py
-
-context.py
-
-paths.py
-
-
-Current responsibilities:
-
-### paths.py
-
-Owns:
-
-- runtime root
-- logs directory
-- cache directory
-- config directory
-- temp directory
-- reports directory
-- workflows directory
-- plugins directory
-- sessions directory
+    |
+    +-- Logging
 
 ---
 
-## Pending
+## Sprint Status
 
-Sprint 1
+Sprint 1 — Foundation
 
-⬜ Vault configuration cleanup
+✅ Repository structure
 
-⬜ Nexus
+✅ Chronicle
+
+    - Logging abstraction
+    - Rotating logs
+    - Single initialization
+    - Vault path integration
+
+
+✅ Vault
+
+    - Runtime paths
+    - Configuration system
+    - Backward compatibility layer
+    - Runtime context
+
+
+✅ Nexus
+
+    - ADB transport
+    - Public API
+    - CommandResult handling
+    - Error handling
+    - Chronicle integration
+
 
 ⬜ Android Device
 
 ---
 
+## Pending
+
+Sprint 1 remaining:
+
+⬜ Android Device abstraction
+
+---
+
 ## Next Task
 
-Continue improving Vault.
+Implement Android Device layer.
 
-Vault will own:
+Android Device will provide a high-level interface:
 
-- runtime paths ✅
-- configuration
-- environment
-- shared settings
+- connect()
+- disconnect()
+- tap()
+- swipe()
+- type_text()
+- press_back()
+- home()
+- launch_app()
 
-Next step:
+Android Device will use Nexus internally.
 
-Refactor the existing Config class into a cleaner configuration system without breaking existing functionality.
-
-After Vault foundation is complete:
-
-Proceed to Nexus (ADB transport layer).
+Nexus will remain a communication layer only.
 
 The project remains fully runnable.

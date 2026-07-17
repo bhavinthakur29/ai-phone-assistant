@@ -1,8 +1,13 @@
-from axion.vault import context
+from axion.nexus import ADBTransport
 
 
-print(context.session_id)
+adb = ADBTransport()
 
-print(context.started_at)
+result = adb.execute(
+    ["devices"]
+)
 
-print(context.environment)
+result.raise_for_error()
+
+print(result.stdout)
+print(result.success)
